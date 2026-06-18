@@ -116,6 +116,26 @@
   [data-theme="dark"] .dist-pill { background: rgba(224, 138, 93, 0.15); color: #e08a5d; }
   .empty-row td { text-align: center; padding: 48px; color: var(--muted); }
 
+  /* EXPANDABLE FORECAST ROWS */
+  .fc-row { cursor: pointer; transition: background 0.15s; }
+  .fc-row:hover { background: var(--hover); }
+  .fc-row.open { background: var(--moss-light); }
+  [data-theme="dark"] .fc-row.open { background: var(--moss-light); }
+  .fc-toggle { display: inline-block; color: var(--moss); font-weight: 800; margin-right: 9px; transition: transform 0.2s; font-size: 1.05rem; }
+  .fc-row.open .fc-toggle { transform: rotate(90deg); }
+  .fc-detail { display: none; }
+  .fc-detail.open { display: table-row; }
+  .fc-detail > td { background: var(--track); padding: 0 16px; border-bottom: 1px solid var(--line); }
+  .fc-detail-inner { padding: 14px 4px 18px; }
+  .fc-detail-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+  .fc-prio { display: flex; align-items: center; gap: 11px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 0.86rem; }
+  .fc-prio:last-child { border-bottom: 0; }
+  .fc-prio-n { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--moss); color: #fff; font-weight: 700; font-size: 0.74rem; display: flex; align-items: center; justify-content: center; }
+  .fc-prio-code { flex-shrink: 0; font-weight: 700; color: var(--clay); font-variant-numeric: tabular-nums; }
+  .fc-prio-txt { color: var(--ink); line-height: 1.4; }
+  .fc-prio-base { color: var(--muted); }
+  .fc-noprio { color: var(--muted); font-style: italic; font-size: 0.86rem; padding: 4px 0; }
+
   /* CHARTS & MAP */
   .chart-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
   @media (min-width: 760px) { .chart-grid.two { grid-template-columns: 1fr 1fr; } }
@@ -643,18 +663,55 @@ async function submitData() {
   btn.disabled = false; btn.innerHTML = "Зберегти мій вибір";
 }
 
+// Пошук вибору студента (з урахуванням можливих пробілів у ПІБ)
+function getChoicesFor(pib) {
+  if (globalChoicesMap[pib]) return globalChoicesMap[pib];
+  const t = String(pib).trim();
+  for (const k in globalChoicesMap) { if (String(k).trim() === t) return globalChoicesMap[k]; }
+  return null;
+}
+
+// HTML зі списком пріоритетів студента (коротко)
+function buildPrioHtml(pib) {
+  const raw = getChoicesFor(pib) || [];
+  const ch = raw.filter(v => v && String(v).trim() !== "");
+  if (!ch.length) return '<div class="fc-noprio">Студент ще не вказав пріоритети.</div>';
+  return ch.map((v, idx) => {
+    const p = String(v).split('|').map(s => s.trim());
+    const code = p[0] || '', spec = p[1] || '', city = p[2] || '', base = p[3] || '';
+    return `<div class="fc-prio"><span class="fc-prio-n">${idx + 1}</span><span class="fc-prio-code">${escapeHtml(code)}</span><span class="fc-prio-txt"><b>${escapeHtml(spec)}</b> · ${escapeHtml(city)} · <span class="fc-prio-base">${escapeHtml(base)}</span></span></div>`;
+  }).join('');
+}
+
 function loadLiveForecast() {
   const tbody = document.getElementById('forecastBody');
   if (!globalForecastData || globalForecastData.length < 2) return;
   tbody.innerHTML = '';
   for (let i = 1; i < globalForecastData.length; i++) {
     const row = globalForecastData[i];
+    const pib = row[1] || "—";
     let badge = "status-gray";
     if ((row[9]||"").toLowerCase().includes("проходить")) badge = "status-green";
     if ((row[9]||"").toLowerCase().includes("ризик") || (row[9]||"").toLowerCase().includes("резерв")) badge = "status-red";
-    tbody.innerHTML += `<tr><td style="font-weight:700;">${row[0]||i}</td><td style="font-weight:600;">${row[1]||"—"}</td><td><span class="status-badge ${badge}">${row[9]||"Не заповнено"}</span></td><td style="font-size:0.85rem;">${row[8]||"—"}</td></tr>`;
+    tbody.innerHTML +=
+      `<tr class="fc-row" data-row="${i}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
+      `<td style="font-weight:600;">${escapeHtml(pib)}</td>`+
+      `<td><span class="status-badge ${badge}">${row[9]||"Не заповнено"}</span></td>`+
+      `<td style="font-size:0.85rem;">${row[8]||"—"}</td></tr>`+
+      `<tr class="fc-detail" data-detail="${i}"><td colspan="4"><div class="fc-detail-inner"><div class="fc-detail-title">Пріоритети студента</div>${buildPrioHtml(pib)}</div></td></tr>`;
   }
 }
+
+// Розгортання/згортання рядка по кліку (один відкритий за раз)
+document.getElementById('forecastBody').addEventListener('click', function(e) {
+  const tr = e.target.closest('.fc-row');
+  if (!tr) return;
+  const idx = tr.getAttribute('data-row');
+  const detail = this.querySelector('.fc-detail[data-detail="' + idx + '"]');
+  const wasOpen = tr.classList.contains('open');
+  this.querySelectorAll('.fc-row.open, .fc-detail.open').forEach(el => el.classList.remove('open'));
+  if (!wasOpen && detail) { tr.classList.add('open'); detail.classList.add('open'); }
+});
 
 const thBtn = document.getElementById('themeToggle');
 let th = localStorage.getItem('theme') || 'light';
