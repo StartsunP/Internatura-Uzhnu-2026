@@ -554,31 +554,86 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   newBtn.addEventListener('click', () => switchTab(newBtn.dataset.tab));
 });
 
-// Функція блокування дублікатів
+// Місткість бази з рядка ("... | місць: N")
+function parseCap(opt) { const m = String(opt).match(/місць:\s*(\d+)/); return m ? Number(m[1]) : Infinity; }
+
+// Рейтинг (Місце) обраного студента
+function getMyRank() {
+  const pib = document.getElementById('pibSelect').value;
+  if (!pib || !globalForecastData) return Infinity;
+  const t = pib.trim();
+  for (let i = 1; i < globalForecastData.length; i++) {
+    if (String(globalForecastData[i][1]).trim() === t) return Number(globalForecastData[i][0]);
+  }
+  return Infinity;
+}
+
+// Скільки місць кожної бази вже зайнято студентами ВИЩЕ за обраного (за попереднім розподілом)
+function placedAboveMe() {
+  const myRank = getMyRank();
+  const placed = {};
+  if (globalForecastData) {
+    for (let i = 1; i < globalForecastData.length; i++) {
+      const r = globalForecastData[i];
+      const res = r[8]; // Попередній результат розподілу
+      if (res && Number(r[0]) < myRank) placed[res] = (placed[res] || 0) + 1;
+    }
+  }
+  return placed;
+}
+
+// Оновлення випадаючих списків: залишок місць, блокування зайнятих, позначки "обране"/"ваш вибір"
 const prios = Array.from(document.querySelectorAll('.prio-select'));
 function updateDropdownLocks() {
-  const vals = prios.map(s => s.value).filter(v => v !== "");
-  prios.forEach(s => Array.from(s.options).forEach(opt => {
-    if (opt.value) opt.disabled = vals.includes(opt.value) && s.value !== opt.value;
-  }));
+  const myRank = getMyRank();
+  const placed = placedAboveMe();
+  const chosen = prios.map(s => s.value).filter(v => v !== "");
+  prios.forEach(sel => {
+    Array.from(sel.options).forEach(opt => {
+      if (!opt.value) return; // плейсхолдер "Оберіть базу..."
+      const base = opt.value;
+      const cap = parseCap(base);
+      const remaining = Math.max(0, cap - (placed[base] || 0));
+      const isCurrent = (sel.value === base);
+      const inOther = chosen.includes(base) && !isCurrent;
+      opt.style.color = '';
+      if (isCurrent) {
+        opt.disabled = false;
+        opt.text = base + '  ✓ ваш вибір';
+        opt.style.color = 'var(--moss)';
+      } else if (inOther) {
+        opt.disabled = true;
+        opt.text = base + '  ✓ обране';
+        opt.style.color = 'var(--muted)';
+      } else if (remaining <= 0 && isFinite(myRank)) {
+        opt.disabled = true;
+        opt.text = base + '  🔴 місць немає';
+        opt.style.color = '#b3402f';
+      } else {
+        opt.disabled = false;
+        opt.text = base + (isFinite(cap) ? '  · залишилось: ' + remaining : '');
+      }
+    });
+  });
 }
 prios.forEach(select => select.addEventListener('change', updateDropdownLocks));
 
 // Функція підстановки збережених даних
 function loadUserChoices(pib) {
-  if (!pib || !globalChoicesMap[pib]) return;
+  if (!pib || !globalChoicesMap[pib]) { updateDropdownLocks(); return; }
   const choices = globalChoicesMap[pib];
   document.getElementById('p1').value = choices[0] || "";
   document.getElementById('p2').value = choices[1] || "";
   document.getElementById('p3').value = choices[2] || "";
   document.getElementById('p4').value = choices[3] || "";
   document.getElementById('p5').value = choices[4] || "";
-  updateDropdownLocks(); 
+  updateDropdownLocks();
 }
 
-// При виборі імені зі списку — підтягуємо вибір
+// При виборі імені зі списку — підтягуємо вибір і оновлюємо доступність баз під його рейтинг
 document.getElementById('pibSelect').addEventListener('change', function() {
   loadUserChoices(this.value);
+  updateDropdownLocks();
 });
 
 // Функція СКАСУВАННЯ змін (повернення до стану бази)
@@ -630,6 +685,8 @@ async function fetchInitialData() {
     if (savedPin) {
       document.getElementById('pinInput').value = savedPin;
     }
+
+    updateDropdownLocks(); // показати залишок місць одразу після завантаження
 
   } catch (error) {
     document.getElementById('loaderUI').innerHTML = `<span style="color:var(--red);">Помилка API Google Sheets.</span>`;
