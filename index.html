@@ -135,6 +135,14 @@
   .fc-prio-txt { color: var(--ink); line-height: 1.4; }
   .fc-prio-base { color: var(--muted); }
   .fc-noprio { color: var(--muted); font-style: italic; font-size: 0.86rem; padding: 4px 0; }
+  .fc-filterbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--card); padding: 14px 16px; border-radius: 14px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .fc-filterbar select { border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 0.86rem; font-family: inherit; background: var(--paper); color: var(--ink); cursor: pointer; max-width: 100%; }
+  .fc-filter-reset { border: 0; background: var(--clay-light); color: var(--clay); font-weight: 600; font-family: inherit; font-size: 0.85rem; padding: 9px 14px; border-radius: 10px; cursor: pointer; }
+  .fc-filter-count { color: var(--muted); font-size: 0.85rem; margin-left: auto; font-weight: 600; }
+  .fc-prio.fc-prio-match { background: rgba(47,107,79,0.12); box-shadow: inset 3px 0 0 var(--moss); border-radius: 8px; padding-left: 9px; }
+  [data-theme="dark"] .fc-prio.fc-prio-match { background: rgba(79,157,119,0.18); }
+  .fc-result-hit { box-shadow: inset 3px 0 0 var(--gold); padding-left: 9px; display: inline-block; border-radius: 6px; }
+  mark.fc-mark { background: var(--gold); color: #fff; border-radius: 4px; padding: 0 4px; }
 
   /* CHARTS & MAP */
   .chart-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
@@ -279,6 +287,21 @@
   <section class="panel" id="live">
     <h2 class="section-title">Живий прогноз розподілу</h2>
     <p class="section-sub">Автоматичний розрахунок на основі поточних заявок та вашого рейтингового балу.</p>
+    <div class="fc-filterbar">
+      <select id="fcSpec"><option value="">Усі спеціальності</option></select>
+      <select id="fcCity"><option value="">Усі міста</option></select>
+      <select id="fcBase"><option value="">Усі бази</option></select>
+      <select id="fcPrio">
+        <option value="">Будь-який пріоритет</option>
+        <option value="1">Пріоритет 1</option>
+        <option value="2">Пріоритет 2</option>
+        <option value="3">Пріоритет 3</option>
+        <option value="4">Пріоритет 4</option>
+        <option value="5">Пріоритет 5</option>
+      </select>
+      <button class="fc-filter-reset" id="fcReset">Скинути фільтри</button>
+      <span class="fc-filter-count" id="fcCount"></span>
+    </div>
     <div class="table-card">
       <table>
         <thead><tr><th style="width: 60px;">#</th><th>ПІБ Студента</th><th>Статус заявки</th><th>Попередній результат розподілу</th></tr></thead>
@@ -536,6 +559,8 @@ updateFavBadge(); render();
 // ==========================================
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkAMeybJpQ1RyvVd21wmZJJ8LWOAV4EGh2W6aPX9Q5AKnVfTuRVcg/exec";
 let globalForecastData = [];
+let globalBases = [];
+let fcFilters = { spec: '', city: '', base: '', prio: '' };
 let globalChoicesMap = {}; 
 
 function switchTab(tabId) {
@@ -663,6 +688,8 @@ async function fetchInitialData() {
     prios.forEach(select => data.bases.forEach(base => select.add(new Option(base, base))));
     
     globalForecastData = data.forecast;
+    globalBases = data.bases || [];
+    populateForecastFilters();
     globalChoicesMap = data.choices || {}; 
     
     document.getElementById('loaderUI').style.display = 'none';
@@ -728,46 +755,132 @@ function getChoicesFor(pib) {
   return null;
 }
 
-// HTML зі списком пріоритетів студента (коротко)
-function buildPrioHtml(pib) {
+// --- ФІЛЬТРИ ЖИВОГО РОЗПОДІЛУ ---
+function parseBase(str) {
+  const p = String(str).split('|').map(s => s.trim());
+  return { code: p[0] || '', spec: p[1] || '', city: p[2] || '', base: p[3] || '' };
+}
+function fcFiltersActive() {
+  return !!(fcFilters.spec || fcFilters.city || fcFilters.base || fcFilters.prio);
+}
+// Які слоти пріоритетів студента відповідають фільтрам (індекси 0..4)
+function fcMatchedSlots(pib) {
+  const ch = getChoicesFor(pib) || [];
+  const slots = fcFilters.prio ? [Number(fcFilters.prio) - 1] : [0, 1, 2, 3, 4];
+  const res = [];
+  slots.forEach(idx => {
+    const v = ch[idx];
+    if (!v || !String(v).trim()) return;
+    const b = parseBase(v);
+    if (fcFilters.spec && b.spec !== fcFilters.spec) return;
+    if (fcFilters.city && b.city !== fcFilters.city) return;
+    if (fcFilters.base && b.base !== fcFilters.base) return;
+    res.push(idx);
+  });
+  return res;
+}
+// Підсвітити токен, якщо збігається з активним фільтром
+function fcHl(text, filterVal) {
+  return (filterVal && text === filterVal) ? '<mark class="fc-mark">' + escapeHtml(text) + '</mark>' : escapeHtml(text);
+}
+// Заповнити списки фільтрів унікальними значеннями з баз
+function populateForecastFilters() {
+  const specs = new Set(), cities = new Set(), bases = new Set();
+  globalBases.forEach(s => { const b = parseBase(s); if (b.spec) specs.add(b.spec); if (b.city) cities.add(b.city); if (b.base) bases.add(b.base); });
+  const fill = (id, set, label) => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">' + label + '</option>' +
+      [...set].sort((a, b) => a.localeCompare(b, 'uk')).map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+    sel.value = cur;
+  };
+  fill('fcSpec', specs, 'Усі спеціальності');
+  fill('fcCity', cities, 'Усі міста');
+  fill('fcBase', bases, 'Усі бази');
+}
+
+// HTML зі списком пріоритетів студента (з підсвічуванням збігів фільтра)
+function buildPrioHtml(pib, matched) {
   const raw = getChoicesFor(pib) || [];
-  const ch = raw.filter(v => v && String(v).trim() !== "");
-  if (!ch.length) return '<div class="fc-noprio">Студент ще не вказав пріоритети.</div>';
-  return ch.map((v, idx) => {
-    const p = String(v).split('|').map(s => s.trim());
-    const code = p[0] || '', spec = p[1] || '', city = p[2] || '', base = p[3] || '';
-    return `<div class="fc-prio"><span class="fc-prio-n">${idx + 1}</span><span class="fc-prio-code">${escapeHtml(code)}</span><span class="fc-prio-txt"><b>${escapeHtml(spec)}</b> · ${escapeHtml(city)} · <span class="fc-prio-base">${escapeHtml(base)}</span></span></div>`;
-  }).join('');
+  const items = [];
+  raw.forEach((v, idx) => {
+    if (!v || !String(v).trim()) return;
+    const b = parseBase(v);
+    const hit = matched && matched.indexOf(idx) !== -1;
+    items.push(`<div class="fc-prio${hit ? ' fc-prio-match' : ''}"><span class="fc-prio-n">${idx + 1}</span><span class="fc-prio-code">${escapeHtml(b.code)}</span><span class="fc-prio-txt"><b>${fcHl(b.spec, fcFilters.spec)}</b> · ${fcHl(b.city, fcFilters.city)} · <span class="fc-prio-base">${fcHl(b.base, fcFilters.base)}</span></span></div>`);
+  });
+  if (!items.length) return '<div class="fc-noprio">Студент ще не вказав пріоритети.</div>';
+  return items.join('');
 }
 
 function loadLiveForecast() {
   const tbody = document.getElementById('forecastBody');
   if (!globalForecastData || globalForecastData.length < 2) return;
-  tbody.innerHTML = '';
+  const active = fcFiltersActive();
+  let shown = 0, html = '';
   for (let i = 1; i < globalForecastData.length; i++) {
     const row = globalForecastData[i];
     const pib = row[1] || "—";
+    const matched = active ? fcMatchedSlots(pib) : [];
+    if (active && matched.length === 0) continue;
+    shown++;
     let badge = "status-gray";
     if ((row[9]||"").toLowerCase().includes("проходить")) badge = "status-green";
     if ((row[9]||"").toLowerCase().includes("ризик") || (row[9]||"").toLowerCase().includes("резерв")) badge = "status-red";
-    tbody.innerHTML +=
-      `<tr class="fc-row" data-row="${i}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
+    let resultCell = escapeHtml(row[8] || "—");
+    if (active && row[8]) {
+      const rb = parseBase(row[8]);
+      const resMatch = (!fcFilters.spec || rb.spec === fcFilters.spec) && (!fcFilters.city || rb.city === fcFilters.city) && (!fcFilters.base || rb.base === fcFilters.base);
+      if (resMatch && rb.spec) resultCell = '<span class="fc-result-hit">' + escapeHtml(rb.code) + ' | ' + fcHl(rb.spec, fcFilters.spec) + ' | ' + fcHl(rb.city, fcFilters.city) + ' | ' + fcHl(rb.base, fcFilters.base) + '</span>';
+    }
+    const openCls = active ? ' open' : '';
+    html +=
+      `<tr class="fc-row${openCls}" data-row="${i}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
       `<td style="font-weight:600;">${escapeHtml(pib)}</td>`+
       `<td><span class="status-badge ${badge}">${row[9]||"Не заповнено"}</span></td>`+
-      `<td style="font-size:0.85rem;">${row[8]||"—"}</td></tr>`+
-      `<tr class="fc-detail" data-detail="${i}"><td colspan="4"><div class="fc-detail-inner"><div class="fc-detail-title">Пріоритети студента</div>${buildPrioHtml(pib)}</div></td></tr>`;
+      `<td style="font-size:0.85rem;">${resultCell}</td></tr>`+
+      `<tr class="fc-detail${openCls}" data-detail="${i}"><td colspan="4"><div class="fc-detail-inner"><div class="fc-detail-title">Пріоритети студента</div>${buildPrioHtml(pib, matched)}</div></td></tr>`;
   }
+  if (active && shown === 0) html = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--muted);">За вибраними фільтрами нікого не знайдено.</td></tr>';
+  tbody.innerHTML = html;
+  const cnt = document.getElementById('fcCount');
+  if (cnt) cnt.textContent = active ? ('Знайдено: ' + shown) : '';
 }
 
-// Розгортання/згортання рядка по кліку (один відкритий за раз)
+// Зміна фільтрів
+['fcSpec', 'fcCity', 'fcBase', 'fcPrio'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', function() {
+    fcFilters = {
+      spec: document.getElementById('fcSpec').value,
+      city: document.getElementById('fcCity').value,
+      base: document.getElementById('fcBase').value,
+      prio: document.getElementById('fcPrio').value
+    };
+    loadLiveForecast();
+  });
+});
+const fcResetBtn = document.getElementById('fcReset');
+if (fcResetBtn) fcResetBtn.addEventListener('click', function() {
+  fcFilters = { spec: '', city: '', base: '', prio: '' };
+  ['fcSpec', 'fcCity', 'fcBase', 'fcPrio'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  loadLiveForecast();
+});
+
+// Розгортання/згортання рядка по кліку
 document.getElementById('forecastBody').addEventListener('click', function(e) {
   const tr = e.target.closest('.fc-row');
   if (!tr) return;
   const idx = tr.getAttribute('data-row');
   const detail = this.querySelector('.fc-detail[data-detail="' + idx + '"]');
   const wasOpen = tr.classList.contains('open');
-  this.querySelectorAll('.fc-row.open, .fc-detail.open').forEach(el => el.classList.remove('open'));
-  if (!wasOpen && detail) { tr.classList.add('open'); detail.classList.add('open'); }
+  if (!fcFiltersActive()) {
+    // без фільтрів — відкритий лише один рядок
+    this.querySelectorAll('.fc-row.open, .fc-detail.open').forEach(el => el.classList.remove('open'));
+  }
+  if (wasOpen) { tr.classList.remove('open'); if (detail) detail.classList.remove('open'); }
+  else { tr.classList.add('open'); if (detail) detail.classList.add('open'); }
 });
 
 const thBtn = document.getElementById('themeToggle');
