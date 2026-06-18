@@ -26,7 +26,6 @@
   body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--paper); color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 18px; }
 
-  /* HERO & TABS */
   .hero { background: radial-gradient(120% 120% at 80% -20%, rgba(184,137,63,0.18), transparent 60%), linear-gradient(160deg, var(--moss-dark) 0%, var(--moss) 100%); color: #fff; padding: 48px 0 44px; position: relative; overflow: hidden; }
   .hero .wrap { position: relative; z-index: 2; }
   .eyebrow { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.75; font-weight: 600; margin-bottom: 14px; }
@@ -36,6 +35,7 @@
   .figure .n { font-size: 2.6rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
   .figure .l { font-size: 0.8rem; opacity: 0.78; margin-top: 4px; letter-spacing: 0.02em; }
   .figure .n .delta { font-size: 1rem; color: #b9e6c9; font-weight: 700; vertical-align: super; margin-left: 4px; }
+
   nav.tabs { position: sticky; top: 0; z-index: 50; background: var(--paper-blur); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); margin-top: -1px; }
   nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; padding-top: 8px; padding-bottom: 8px; }
   nav.tabs button { border: 0; background: transparent; color: var(--muted); font-family: inherit; font-size: 0.88rem; font-weight: 600; padding: 9px 16px; border-radius: 9px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
@@ -46,12 +46,12 @@
   .fav-tab.active .fav-badge { background: rgba(255,255,255,0.3); }
   .theme-toggle { margin-left: auto; border: 0; background: transparent; font-size: 1.1rem; cursor: pointer; padding: 8px 10px; border-radius: 9px; flex-shrink: 0; }
 
-  /* PANELS & FORMS */
   .panel { display: none; padding: 32px 0 64px; }
   .panel.active { display: block; animation: fade 0.3s ease; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   .section-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 4px; }
   .section-sub { color: var(--muted); font-size: 0.92rem; margin-bottom: 24px; }
+
   .api-card { background: var(--card); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
   .api-card label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; color: var(--ink); }
   .api-card select, .api-card input { width: 100%; border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 14px; font-size: 0.95rem; font-family: inherit; background: var(--paper); color: var(--ink); margin-bottom: 16px; transition: border 0.15s; }
@@ -72,14 +72,12 @@
   .status-red { background: var(--red-light); color: var(--red); }
   .auth-note { display: block; font-size: 0.75rem; color: var(--muted); margin-top: -10px; margin-bottom: 16px; font-weight: 600;}
 
-  /* ТЕМНА ТЕМА ДЛЯ СТАТУСІВ */
   [data-theme="dark"] .status-green { background: rgba(79, 157, 119, 0.2); color: #7bb494; }
   [data-theme="dark"] .status-gray { background: rgba(139, 161, 148, 0.15); color: #a4b5ac; }
   [data-theme="dark"] .status-red { background: rgba(224, 122, 104, 0.2); color: #e8a095; }
   [data-theme="dark"] .status-msg.success { background: rgba(79, 157, 119, 0.2); color: #7bb494; }
   [data-theme="dark"] .status-msg.error { background: rgba(224, 122, 104, 0.2); color: #e8a095; }
 
-  /* ТАБЛИЦІ ТА КАРТИ (БЕЗ ЗМІН) */
   .toolbar { background: var(--card); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; position: sticky; top: 56px; z-index: 30; }
   .search-box { flex: 1; min-width: 220px; position: relative; }
   .search-box input { width: 100%; border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 14px 12px 42px; font-size: 0.95rem; font-family: inherit; background: var(--paper); color: var(--ink); }
@@ -107,6 +105,7 @@
   .dist-pill { display: inline-block; background: var(--clay-light); color: var(--clay); font-weight: 700; font-size: 0.8rem; padding: 2px 9px; border-radius: 20px; white-space: nowrap; }
   [data-theme="dark"] .dist-pill { background: rgba(224, 138, 93, 0.15); color: #e08a5d; }
   .empty-row td { text-align: center; padding: 48px; color: var(--muted); }
+
   .chart-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
   @media (min-width: 760px) { .chart-grid.two { grid-template-columns: 1fr 1fr; } }
   .chart-card { background: var(--card); border-radius: 16px; padding: 22px 24px; box-shadow: var(--shadow); }
@@ -127,6 +126,7 @@
   .insight:nth-child(4) { background: linear-gradient(155deg, #9a5530, var(--clay)); }
   .ins-n { font-size: 2rem; font-weight: 800; line-height: 1; }
   .ins-l { font-size: 0.84rem; margin-top: 8px; font-weight: 600; line-height: 1.3; }
+
   .map-card { display: grid; grid-template-columns: 1fr; gap: 16px; }
   @media (min-width: 880px) { .map-card { grid-template-columns: 1.65fr 1fr; align-items: start; } }
   .map-frame { background: linear-gradient(165deg, var(--map-bg1) 0%, var(--map-bg2) 100%); border-radius: 18px; box-shadow: var(--shadow); padding: 8px; overflow: hidden; }
@@ -150,6 +150,7 @@
   .md-row { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f1eee4; font-size: 0.88rem; }
   [data-theme="dark"] .md-row { border-bottom-color: var(--line); }
   .md-row .s { flex: 1; } .md-row .b { color: var(--muted); font-size: 0.78rem; display: block; margin-top: 1px; } .md-row .c { font-weight: 700; color: var(--moss); flex-shrink: 0; }
+
   .change-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
   @media (min-width: 620px) { .change-stats { grid-template-columns: repeat(4, 1fr); } }
   .cstat { background: var(--card); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); text-align: center; }
@@ -169,6 +170,7 @@
   [data-theme="dark"] .chg-badge.add { background: rgba(79, 157, 119, 0.2); color: #7bb494; }
   [data-theme="dark"] .chg-badge.rem { background: rgba(224, 122, 104, 0.2); color: #e8a095; }
   .old-n { color: var(--muted); text-decoration: line-through; } .arr { color: var(--gold); font-weight: 700; margin: 0 2px; } .new-n { color: var(--moss); font-weight: 700; }
+  
   .fav-actions { display: flex; gap: 10px; margin-bottom: 14px; }
   .copy-btn { border: 0; background: var(--moss-light); color: var(--moss); font-weight: 600; font-size: 0.85rem; padding: 10px 14px; border-radius: 10px; cursor: pointer; }
   [data-theme="dark"] .copy-btn { background: rgba(79, 157, 119, 0.2); color: #7bb494; }
@@ -238,7 +240,7 @@
         <select class="prio-select" id="p5"><option value="">Оберіть базу...</option></select>
 
         <div class="btn-group">
-          <button class="submit-btn" id="submitBtn" onclick="submitData()">Зберегти примусово</button>
+          <button class="submit-btn" id="submitBtn" onclick="submitData(false)">Зберегти примусово</button>
           <button class="cancel-btn" id="cancelBtn" onclick="resetForm()">Скасувати зміни</button>
         </div>
         <div id="statusMsg" class="status-msg"></div>
@@ -441,7 +443,7 @@ document.getElementById('cbChg').innerHTML = `<div class="cb-head"><div class="c
 updateFavBadge(); render();
 
 // ==========================================
-// БЛОК 3: АВТОЗБЕРЕЖЕННЯ ТА ІНТЕГРАЦІЯ API
+// БЛОК 3: GET-API ТА АВТОЗБЕРЕЖЕННЯ 
 // ==========================================
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkAMeybJpQ1RyvVd21wmZJJ8LWOAV4EGh2W6aPX9Q5AKnVfTuRVcg/exec";
 let globalForecastData = [];
@@ -489,7 +491,6 @@ document.getElementById('pibSelect').addEventListener('change', function() {
 function resetForm() {
   const pib = document.getElementById('pibSelect').value;
   const msg = document.getElementById('statusMsg');
-  
   if (pib && globalChoicesMap[pib]) {
     loadUserChoices(pib);
     msg.textContent = "Зміни скасовано. Повернуто до збереженого стану.";
@@ -502,19 +503,15 @@ function resetForm() {
   setTimeout(() => msg.style.display = 'none', 3000);
 }
 
-// ЛОГІКА АВТОЗБЕРЕЖЕННЯ (Debounce)
+// ЛОГІКА АВТОЗБЕРЕЖЕННЯ
 let saveTimeout;
 function triggerAutoSave() {
   const pib = document.getElementById('pibSelect').value;
   const pin = document.getElementById('pinInput').value;
   const p1 = document.getElementById('p1').value;
-  
-  // Зберігаємо автоматично тільки якщо введено ПІН, ПІБ і хоча б 1-й пріоритет
   if (pib && pin.length >= 4 && p1) {
     clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(() => {
-      submitData(true); // Передаємо флаг, що це автозбереження
-    }, 800); 
+    saveTimeout = setTimeout(() => { submitData(true); }, 800); 
   }
 }
 
@@ -529,7 +526,6 @@ async function fetchInitialData() {
     const data = await response.json();
     const pibSelect = document.getElementById('pibSelect');
     
-    // Очищаємо список перед завантаженням (щоб не дублювало)
     pibSelect.innerHTML = '<option value="">Оберіть ПІБ...</option>';
     data.students.forEach(name => pibSelect.add(new Option(name, name)));
     
@@ -556,9 +552,7 @@ async function fetchInitialData() {
         localStorage.removeItem('auth_pib');
       }
     }
-    if (savedPin) {
-      document.getElementById('pinInput').value = savedPin;
-    }
+    if (savedPin) { document.getElementById('pinInput').value = savedPin; }
 
   } catch (error) {
     document.getElementById('loaderUI').innerHTML = `<span style="color:var(--red);">Помилка API Google Sheets.</span>`;
@@ -570,13 +564,7 @@ async function submitData(isAuto = false) {
   const pin = document.getElementById('pinInput').value;
   const btn = document.getElementById('submitBtn'), msg = document.getElementById('statusMsg');
   
-  const payload = {
-    pib: pib, pin: pin,
-    p1: document.getElementById('p1').value, p2: document.getElementById('p2').value,
-    p3: document.getElementById('p3').value, p4: document.getElementById('p4').value, p5: document.getElementById('p5').value
-  };
-  
-  if (!payload.pib || !payload.pin || !payload.p1) {
+  if (!pib || !pin || !document.getElementById('p1').value) {
     if (!isAuto) { msg.textContent = "ПІБ, ПІН та Пріоритет 1 обов'язкові!"; msg.className = "status-msg error"; }
     return;
   }
@@ -585,8 +573,19 @@ async function submitData(isAuto = false) {
   btn.innerHTML = `<span class="spinner"></span> ${isAuto ? 'Автозбереження...' : 'Відправка...'}`; 
   msg.style.display = 'none';
   
+  // ФОРМУЄМО GET ЗАПИТ ЗАМІСТЬ POST
+  const url = new URL(WEB_APP_URL);
+  url.searchParams.append('action', 'save');
+  url.searchParams.append('pib', pib);
+  url.searchParams.append('pin', pin);
+  url.searchParams.append('p1', document.getElementById('p1').value);
+  url.searchParams.append('p2', document.getElementById('p2').value);
+  url.searchParams.append('p3', document.getElementById('p3').value);
+  url.searchParams.append('p4', document.getElementById('p4').value);
+  url.searchParams.append('p5', document.getElementById('p5').value);
+  
   try {
-    const response = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(url.toString(), { method: 'GET' });
     const result = await response.json();
     if (result.status === "success") {
       msg.textContent = "✅ Збережено!"; msg.className = "status-msg success";
@@ -594,12 +593,12 @@ async function submitData(isAuto = false) {
       localStorage.setItem('auth_pin', pin);
       document.getElementById('authNote').innerHTML = "✓ Дані збережено на цьому пристрої.";
       
-      // Оновлюємо внутрішній кеш, щоб скасування працювало до актуальної версії
-      globalChoicesMap[pib] = [payload.p1, payload.p2, payload.p3, payload.p4, payload.p5];
+      globalChoicesMap[pib] = [
+        document.getElementById('p1').value, document.getElementById('p2').value,
+        document.getElementById('p3').value, document.getElementById('p4').value, document.getElementById('p5').value
+      ];
       
-      // Фонове оновлення розподілу
       fetch(WEB_APP_URL).then(r => r.json()).then(d => { globalForecastData = d.forecast; });
-      
     } else { 
       msg.textContent = "Помилка: " + (result.message || "Невірний ПІН"); 
       msg.className = "status-msg error"; 
@@ -610,19 +609,6 @@ async function submitData(isAuto = false) {
   }
   btn.disabled = false; btn.innerHTML = "Зберегти примусово";
   if (isAuto) setTimeout(() => msg.style.display = 'none', 3000);
-}
-
-function loadLiveForecast() {
-  const tbody = document.getElementById('forecastBody');
-  if (!globalForecastData || globalForecastData.length < 2) return;
-  tbody.innerHTML = '';
-  for (let i = 1; i < globalForecastData.length; i++) {
-    const row = globalForecastData[i];
-    let badge = "status-gray";
-    if ((row[9]||"").toLowerCase().includes("проходить")) badge = "status-green";
-    if ((row[9]||"").toLowerCase().includes("ризик") || (row[9]||"").toLowerCase().includes("резерв")) badge = "status-red";
-    tbody.innerHTML += `<tr><td style="font-weight:700;">${row[0]||i}</td><td style="font-weight:600;">${row[1]||"—"}</td><td><span class="status-badge ${badge}">${row[9]||"Не заповнено"}</span></td><td style="font-size:0.85rem;">${row[8]||"—"}</td></tr>`;
-  }
 }
 
 const thBtn = document.getElementById('themeToggle');
