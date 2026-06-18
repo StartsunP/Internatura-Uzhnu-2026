@@ -3,29 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Інтернатура · Закарпаття · Розподіл 2026</title>
+<title>Інтернатура · Закарпаття · Перелік місць</title>
 <style>
   :root {
-    --ink: #16261d; --paper: #f6f4ec; --card: #ffffff;
-    --moss: #2f6b4f; --moss-dark: #1e4a36; --moss-light: #e3f0e8;
-    --clay: #c1633a; --clay-light: #f6e5dc; --gold: #b8893f;
-    --line: #e4e0d3; --muted: #6b7a70; --red: #b3402f; --red-light: #f6dfdb;
+    --ink: #16261d; --paper: #f6f4ec; --card: #ffffff; --moss: #2f6b4f; --moss-dark: #1e4a36; --moss-light: #e3f0e8;
+    --clay: #c1633a; --clay-light: #f6e5dc; --gold: #b8893f; --line: #e4e0d3; --muted: #6b7a70; --red: #b3402f; --red-light: #f6dfdb;
     --paper-blur: rgba(246,244,236,0.92); --hover: #faf9f3; --track: #f0ede2;
     --map-bg1: #eef3ee; --map-bg2: #e6efe7; --map-fill: #ffffff; --map-stroke: #9aa89e;
     --shadow: 0 1px 3px rgba(22,38,29,0.06), 0 8px 24px rgba(22,38,29,0.05);
   }
   [data-theme="dark"] {
-    --ink: #e8efe9; --paper: #11201a; --card: #1a2b23;
-    --moss: #4f9d77; --moss-dark: #15382a; --moss-light: #1f3a2d;
-    --clay: #e08a5d; --clay-light: #3a2a20; --gold: #d3a85f;
-    --line: #2a3d33; --muted: #8ba194; --red: #e07a68; --red-light: #3a2622;
+    --ink: #e8efe9; --paper: #11201a; --card: #1a2b23; --moss: #4f9d77; --moss-dark: #15382a; --moss-light: #1f3a2d;
+    --clay: #e08a5d; --clay-light: #3a2a20; --gold: #d3a85f; --line: #2a3d33; --muted: #8ba194; --red: #e07a68; --red-light: #3a2622;
     --paper-blur: rgba(17,32,26,0.92); --hover: #213429; --track: #243a2f;
     --map-bg1: #15281f; --map-bg2: #18301f; --map-fill: #1d2f25; --map-stroke: #46604f;
     --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--paper); color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--paper); color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 18px; }
 
   /* HERO */
@@ -34,6 +30,10 @@
   .eyebrow { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.75; font-weight: 600; margin-bottom: 14px; }
   .hero h1 { font-size: clamp(1.9rem, 5vw, 3.1rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; max-width: 16ch; }
   .hero .lede { margin-top: 16px; font-size: 1.02rem; opacity: 0.9; max-width: 52ch; }
+  .hero-figures { display: flex; gap: 36px; margin-top: 36px; flex-wrap: wrap; }
+  .figure .n { font-size: 2.6rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+  .figure .l { font-size: 0.8rem; opacity: 0.78; margin-top: 4px; letter-spacing: 0.02em; }
+  .figure .n .delta { font-size: 1rem; color: #b9e6c9; font-weight: 700; vertical-align: super; margin-left: 4px; }
 
   /* TABS */
   nav.tabs { position: sticky; top: 0; z-index: 50; background: var(--paper-blur); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); margin-top: -1px; }
@@ -41,6 +41,9 @@
   nav.tabs button { border: 0; background: transparent; color: var(--muted); font-family: inherit; font-size: 0.88rem; font-weight: 600; padding: 9px 16px; border-radius: 9px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
   nav.tabs button:hover { color: var(--ink); background: rgba(47,107,79,0.07); }
   nav.tabs button.active { color: #fff; background: var(--moss); }
+  nav.tabs .fav-tab.active { background: var(--clay); }
+  .fav-badge { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 4px; background: var(--clay); color: #fff; border-radius: 10px; font-size: 0.72rem; font-weight: 800; text-align: center; line-height: 18px; }
+  .fav-tab.active .fav-badge { background: rgba(255,255,255,0.3); }
   .theme-toggle { margin-left: auto; border: 0; background: transparent; font-size: 1.1rem; cursor: pointer; padding: 8px 10px; border-radius: 9px; flex-shrink: 0; }
 
   /* PANELS */
@@ -50,7 +53,7 @@
   .section-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 4px; }
   .section-sub { color: var(--muted); font-size: 0.92rem; margin-bottom: 24px; }
 
-  /* FORMS & API (НОВЕ) */
+  /* API FORMS & DISTRIBUTION (NEW) */
   .api-card { background: var(--card); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
   .api-card label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; color: var(--ink); }
   .api-card select, .api-card input { width: 100%; border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 14px; font-size: 0.95rem; font-family: inherit; background: var(--paper); color: var(--ink); margin-bottom: 16px; transition: border 0.15s; }
@@ -62,17 +65,102 @@
   .status-msg.error { display: block; background: var(--red-light); color: var(--red); }
   .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; vertical-align: middle; margin-right: 8px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* TABLES */
-  .table-card { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); margin-top: 16px; overflow: hidden; overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-  thead th { text-align: left; padding: 14px 16px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line); }
-  tbody td { padding: 13px 16px; border-bottom: 1px solid #f1eee4; vertical-align: middle; }
-  tbody tr:hover { background: var(--hover); }
   .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
   .status-green { background: var(--moss-light); color: var(--moss-dark); }
   .status-gray { background: var(--track); color: var(--muted); }
   .status-red { background: var(--red-light); color: var(--red); }
+
+  /* SEARCH & TABLES (OLD) */
+  .toolbar { background: var(--card); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; position: sticky; top: 56px; z-index: 30; }
+  .search-box { flex: 1; min-width: 220px; position: relative; }
+  .search-box input { width: 100%; border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 14px 12px 42px; font-size: 0.95rem; font-family: inherit; background: var(--paper); color: var(--ink); }
+  .search-box input:focus { outline: none; border-color: var(--moss); background: #fff; }
+  .search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); opacity: 0.45; }
+  select.filter { border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 36px 12px 14px; font-size: 0.9rem; font-family: inherit; background: var(--paper); color: var(--ink); cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7a70' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; }
+  .result-count { color: var(--muted); font-size: 0.85rem; padding: 0 4px; }
+  .clear-btn { border: 0; background: var(--clay-light); color: var(--clay); font-weight: 600; font-family: inherit; font-size: 0.85rem; padding: 10px 14px; border-radius: 10px; cursor: pointer; }
+  .table-card { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); margin-top: 16px; overflow: hidden; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 600px; }
+  thead th { text-align: left; padding: 14px 16px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line); cursor: pointer; white-space: nowrap; }
+  thead th:hover { color: var(--moss); }
+  tbody td { padding: 13px 16px; border-bottom: 1px solid #f1eee4; vertical-align: top; }
+  tbody tr:hover { background: var(--hover); }
+  .spec-cell { font-weight: 600; }
+  .city-pill { display: inline-block; background: var(--moss-light); color: var(--moss-dark); padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+  .fac-cell { color: var(--ink); }
+  .fac-cell .vac { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+  .count-badge { display: inline-block; min-width: 30px; text-align: center; font-weight: 700; background: var(--moss); color: #fff; border-radius: 8px; padding: 3px 9px; font-size: 0.88rem; }
+  .zvo-tag { display: inline-block; font-size: 0.72rem; color: var(--gold); font-weight: 600; border: 1px solid #e8d5b0; border-radius: 6px; padding: 1px 6px; margin: 1px 2px 1px 0; white-space: nowrap; }
+  .star-btn { border: 0; background: transparent; cursor: pointer; font-size: 1.15rem; color: #cdd3cb; transition: transform 0.12s; }
+  .star-btn.on { color: var(--gold); }
+  [data-theme="dark"] .star-btn { color: #4a5a50; } [data-theme="dark"] .star-btn.on { color: var(--gold); }
+  .dist-pill { display: inline-block; background: var(--clay-light); color: var(--clay); font-weight: 700; font-size: 0.8rem; padding: 2px 9px; border-radius: 20px; white-space: nowrap; }
+  .empty-row td { text-align: center; padding: 48px; color: var(--muted); }
+
+  /* CHARTS & MAP (OLD) */
+  .chart-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 760px) { .chart-grid.two { grid-template-columns: 1fr 1fr; } }
+  .chart-card { background: var(--card); border-radius: 16px; padding: 22px 24px; box-shadow: var(--shadow); }
+  .chart-card h3 { font-size: 1rem; font-weight: 700; }
+  .chart-card .ch-sub { color: var(--muted); font-size: 0.82rem; margin-bottom: 18px; }
+  .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; font-size: 0.85rem; }
+  .bar-label { width: 38%; flex-shrink: 0; text-align: right; color: var(--ink); line-height: 1.25; }
+  .bar-track { flex: 1; background: var(--track); border-radius: 6px; height: 22px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--moss), #4a8f6d); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: #fff; font-weight: 700; font-size: 0.76rem; width: 0; transition: width 0.9s cubic-bezier(.16,1,.3,1); }
+  .bar-row.alt .bar-fill { background: linear-gradient(90deg, var(--clay), #d6824f); }
+  .donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 9px; font-size: 0.84rem; margin-bottom: 7px; }
+  .legend-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+  .legend-item .lv { margin-left: auto; font-weight: 700; color: var(--muted); }
+  .insight-strip { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 24px; }
+  @media (min-width: 680px) { .insight-strip { grid-template-columns: repeat(4,1fr); } }
+  .insight { background: linear-gradient(155deg, var(--moss-dark), var(--moss)); color: #fff; border-radius: 14px; padding: 18px 18px 16px; box-shadow: var(--shadow); }
+  .insight:nth-child(4) { background: linear-gradient(155deg, #9a5530, var(--clay)); }
+  .ins-n { font-size: 2rem; font-weight: 800; line-height: 1; }
+  .ins-l { font-size: 0.84rem; margin-top: 8px; font-weight: 600; line-height: 1.3; }
+  .map-card { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 880px) { .map-card { grid-template-columns: 1.65fr 1fr; align-items: start; } }
+  .map-frame { background: linear-gradient(165deg, var(--map-bg1) 0%, var(--map-bg2) 100%); border-radius: 18px; box-shadow: var(--shadow); padding: 8px; overflow: hidden; }
+  .map-frame svg { width: 100%; height: auto; display: block; }
+  .map-legend { display: flex; flex-wrap: wrap; gap: 16px; padding: 10px 14px 6px; }
+  .leg-item { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--muted); }
+  .leg-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--moss); border: 2px solid #fff; }
+  .leg-line { width: 22px; height: 0; border-top-width: 3px; border-top-style: solid; }
+  .region-shape { fill: var(--map-fill); stroke: var(--map-stroke); stroke-width: 2.5; stroke-linejoin: round; }
+  .river { fill: none; stroke: #a9cbe0; stroke-width: 3.5; stroke-linecap: round; }
+  .road { fill: none; stroke: #dcb98f; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+  .city-dot { fill: var(--moss); stroke: #fff; stroke-width: 2.5; transition: fill 0.15s; }
+  .city-grp:hover .city-dot, .city-grp.sel .city-dot { fill: var(--clay); }
+  .city-dot.dimmed { fill: #c2cdc4; }
+  .city-label-txt { font-size: 13px; font-weight: 600; fill: var(--ink); pointer-events: none; paint-order: stroke; stroke: rgba(255,255,255,0.9); stroke-width: 3.5px; stroke-linejoin: round; }
+  .city-count-txt { font-size: 11px; font-weight: 800; fill: #fff; pointer-events: none; text-anchor: middle; dominant-baseline: central; }
+  .map-detail { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 22px; min-height: 200px; }
+  .md-empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 40px 10px; }
+  .md-city { font-size: 1.2rem; font-weight: 800; }
+  .md-total { color: var(--moss); font-weight: 700; font-size: 0.9rem; margin: 2px 0 16px; }
+  .md-row { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f1eee4; font-size: 0.88rem; }
+  .md-row .s { flex: 1; } .md-row .b { color: var(--muted); font-size: 0.78rem; display: block; margin-top: 1px; } .md-row .c { font-weight: 700; color: var(--moss); flex-shrink: 0; }
+
+  /* CHANGES & FAVS */
+  .change-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media (min-width: 620px) { .change-stats { grid-template-columns: repeat(4, 1fr); } }
+  .cstat { background: var(--card); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); text-align: center; }
+  .cstat .n { font-size: 1.9rem; font-weight: 800; }
+  .cstat.green .n { color: var(--moss); } .cstat.red .n { color: var(--red); } .cstat.gold .n { color: var(--gold); }
+  .change-block { background: var(--card); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 18px; }
+  .cb-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .cb-icon { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+  .cb-icon.add { background: var(--moss-light); } .cb-icon.rem { background: var(--red-light); } .cb-icon.chg { background: #f6ecd6; }
+  .chg-item { display: flex; align-items: baseline; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f1eee4; font-size: 0.9rem; flex-wrap: wrap; }
+  .chg-spec { font-weight: 600; flex: 1; min-width: 180px; }
+  .chg-badge { font-weight: 700; border-radius: 7px; padding: 2px 9px; font-size: 0.82rem; }
+  .chg-badge.add { background: var(--moss-light); color: var(--moss-dark); }
+  .chg-badge.rem { background: var(--red-light); color: var(--red); text-decoration: line-through; }
+  .old-n { color: var(--muted); text-decoration: line-through; } .arr { color: var(--gold); font-weight: 700; margin: 0 2px; } .new-n { color: var(--moss); font-weight: 700; }
+  .fav-actions { display: flex; gap: 10px; margin-bottom: 14px; }
+  .copy-btn { border: 0; background: var(--moss-light); color: var(--moss); font-weight: 600; font-size: 0.85rem; padding: 10px 14px; border-radius: 10px; cursor: pointer; }
+  .fav-empty { text-align: center; padding: 56px 20px; color: var(--muted); }
+  .fav-empty-star { font-size: 3rem; color: var(--gold); opacity: 0.5; margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -80,8 +168,14 @@
 <header class="hero">
   <div class="wrap">
     <div class="eyebrow">Інтернатура · Закарпатська область</div>
-    <h1>Система вибору та розподілу 2026</h1>
-    <p class="lede">Переглядайте бази, подавайте свої пріоритети та слідкуйте за живим рейтинговим розподілом.</p>
+    <h1>Перелік баз та розподіл 2026</h1>
+    <p class="lede">Подавайте пріоритети онлайн, слідкуйте за живим розподілом, аналізуйте статистику та карти наявних вакансій.</p>
+    <div class="hero-figures">
+      <div class="figure"><div class="n">181<span class="delta">+19</span></div><div class="l">місць усього</div></div>
+      <div class="figure"><div class="n">21</div><div class="l">спеціальностей</div></div>
+      <div class="figure"><div class="n">31</div><div class="l">закладів</div></div>
+      <div class="figure"><div class="n">14</div><div class="l">міст і громад</div></div>
+    </div>
   </div>
 </header>
 
@@ -90,8 +184,11 @@
     <button class="tab-btn active" data-tab="choice">🎯 Мій вибір</button>
     <button class="tab-btn" data-tab="live">⚡ Живий розподіл</button>
     <button class="tab-btn" data-tab="browse">Перелік місць</button>
-    <button class="tab-btn" data-tab="stats">Статистика баз</button>
-    <button class="theme-toggle" id="themeToggle">🌙</button>
+    <button class="tab-btn" data-tab="map">Карта</button>
+    <button class="tab-btn" data-tab="stats">Статистика</button>
+    <button class="tab-btn" data-tab="changes">Що змінилось</button>
+    <button class="tab-btn fav-tab" data-tab="favs">★ Мій список <span class="fav-badge" id="favBadge">0</span></button>
+    <button class="theme-toggle" id="themeToggle" title="Світла / темна тема">🌙</button>
   </div>
 </nav>
 
@@ -103,31 +200,24 @@
 
     <div class="api-card">
       <div id="loaderUI" style="text-align:center; color:var(--muted); padding: 20px;">
-        <span class="spinner" style="border-color:var(--line); border-top-color:var(--moss); width:24px; height:24px;"></span>
+        <span class="spinner" style="border-color:var(--line); border-top-color:var(--moss);"></span>
         <p style="margin-top:10px; font-weight:600;">Синхронізація з базою даних...</p>
       </div>
 
       <div id="formUI" style="display:none;">
         <label>Ваше ПІБ (згідно з рейтингом):</label>
         <select id="pibSelect"><option value="">Оберіть ПІБ...</option></select>
-
         <label>Ваш ПІН-код:</label>
         <input type="password" id="pinInput" placeholder="4 цифри" maxlength="4">
-
         <hr style="border:0; border-top:1px solid var(--line); margin: 24px 0;">
-
         <label>Пріоритет 1 (Найбажаніший):</label>
         <select class="prio-select" id="p1"><option value="">Оберіть базу...</option></select>
-
         <label>Пріоритет 2:</label>
         <select class="prio-select" id="p2"><option value="">Оберіть базу...</option></select>
-
         <label>Пріоритет 3:</label>
         <select class="prio-select" id="p3"><option value="">Оберіть базу...</option></select>
-
         <label>Пріоритет 4:</label>
         <select class="prio-select" id="p4"><option value="">Оберіть базу...</option></select>
-
         <label>Пріоритет 5 (Резервний):</label>
         <select class="prio-select" id="p5"><option value="">Оберіть базу...</option></select>
 
@@ -139,18 +229,10 @@
 
   <section class="panel" id="live">
     <h2 class="section-title">Живий прогноз розподілу</h2>
-    <p class="section-sub">Автоматичний розрахунок за алгоритмом Гейла-Шеплі на основі поточних заявок та вашого рейтингового балу.</p>
-    
+    <p class="section-sub">Автоматичний розрахунок на основі поточних заявок та вашого рейтингового балу.</p>
     <div class="table-card">
       <table>
-        <thead>
-          <tr>
-            <th style="width: 60px;">#</th>
-            <th>ПІБ Студента</th>
-            <th>Статус заявки</th>
-            <th>Попередній результат розподілу</th>
-          </tr>
-        </thead>
+        <thead><tr><th style="width: 60px;">#</th><th>ПІБ Студента</th><th>Статус заявки</th><th>Попередній результат розподілу</th></tr></thead>
         <tbody id="forecastBody">
           <tr><td colspan="4" style="text-align:center; padding: 40px; color:var(--muted);">Очікування даних від Google Sheets...</td></tr>
         </tbody>
@@ -159,225 +241,106 @@
   </section>
 
   <section class="panel" id="browse">
-    <h2 class="section-title">Довідник місць</h2>
-    <p class="section-sub">Тут ви можете ознайомитись з усіма доступними вакансіями перед тим, як робити вибір.</p>
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M13 13L16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input type="text" id="search" placeholder="Пошук: спеціальність, місто, заклад…" autocomplete="off">
+      </div>
+      <select class="filter" id="fSpec"><option value="">Усі спеціальності</option></select>
+      <select class="filter" id="fCity"><option value="">Усі міста</option></select>
+      <select class="filter" id="fHome" title="Сортувати за відстанню від мого міста"><option value="">📍 Моє місто…</option></select>
+      <button class="clear-btn" id="clearBtn">Скинути</button>
+      <span class="result-count" id="resultCount"></span>
+    </div>
     <div class="table-card">
       <table>
         <thead>
           <tr>
-            <th>Спеціальність</th>
-            <th>Місто</th>
-            <th>База / вакансія</th>
-            <th style="text-align:center">Місць</th>
+            <th class="star-col"></th>
+            <th data-sort="spec">Спеціальність <span class="sort-ind"></span></th>
+            <th data-sort="city">Місто <span class="sort-ind"></span></th>
+            <th data-sort="facShort">База / вакансія <span class="sort-ind"></span></th>
+            <th data-sort="zvo">Хто може <span class="sort-ind"></span></th>
+            <th data-sort="dist" class="dist-col" style="text-align:center; display:none">Відстань <span class="sort-ind"></span></th>
+            <th data-sort="count" style="text-align:center">Місць <span class="sort-ind">▾</span></th>
           </tr>
         </thead>
-        <tbody id="staticBasesBody">
-          </tbody>
+        <tbody id="tbody"></tbody>
       </table>
     </div>
   </section>
 
-  <section class="panel" id="stats">
-    <h2 class="section-title">Аналітика та попит</h2>
-    <p class="section-sub">Відслідковуйте загальну кількість місць по спеціальностях.</p>
-    <div class="api-card" style="text-align: center; color: var(--muted);">
-       <p>Модуль статистики успішно інтегровано.</p>
-       <p>Загалом доступно: <b>181 місце</b>.</p>
+  <section class="panel" id="map">
+    <h2 class="section-title">Карта області</h2>
+    <div class="map-toolbar" style="margin-bottom: 16px;">
+      <select class="filter" id="mapSpec"><option value="">Усі спеціальності</option></select>
+      <span class="result-count" id="mapCount"></span>
     </div>
+    <div class="map-card">
+      <div class="map-frame">
+        <svg id="mapSvg" viewBox="0 0 1000 560"></svg>
+        <div class="map-legend">
+          <span class="leg-item"><span class="leg-dot"></span>місто з місцями</span>
+          <span class="leg-item"><span class="leg-line" style="border-top-color:#dcb98f;"></span>основні дороги</span>
+          <span class="leg-item"><span class="leg-line" style="border-top-color:#a9cbe0;"></span>р. Тиса</span>
+        </div>
+      </div>
+      <div class="map-detail" id="mapDetail"><div class="md-empty">Наведіть курсор або торкніться міста.</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="stats">
+    <h2 class="section-title">Статистика місць</h2>
+    <div class="insight-strip">
+      <div class="insight"><div class="ins-n">47%</div><div class="ins-l">місць — в Ужгороді</div></div>
+      <div class="insight"><div class="ins-n">29</div><div class="ins-l">місць у сімейній медицині</div></div>
+      <div class="insight"><div class="ins-n">24</div><div class="ins-l">місця в УМБКЛ</div></div>
+      <div class="insight"><div class="ins-n">+4</div><div class="ins-l">нові спеціальності</div></div>
+    </div>
+    <div class="chart-grid two">
+      <div class="chart-card"><h3>За спеціальностями</h3><div id="chartSpec"></div></div>
+      <div class="chart-card"><h3>За містами</h3><div id="chartCity"></div></div>
+    </div>
+    <div class="chart-grid" style="margin-top:20px"><div class="chart-card"><h3>Найбільші заклади</h3><div id="chartFac"></div></div></div>
+    <div class="chart-grid two" style="margin-top:20px">
+      <div class="chart-card"><h3>Доступність за освітою</h3><div id="chartZvo" class="donut-wrap"></div></div>
+      <div class="chart-card"><h3>Спеціальності за містами</h3><div id="chartCoverage"></div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="changes">
+    <h2 class="section-title">Що змінилось</h2>
+    <div class="change-stats">
+      <div class="cstat green"><div class="n">+4</div><div class="l">нові спеціальності</div></div>
+      <div class="cstat green"><div class="n">+3</div><div class="l">нові бази</div></div>
+      <div class="cstat red"><div class="n">−2</div><div class="l">вилучені бази</div></div>
+      <div class="cstat gold"><div class="n">+19</div><div class="l">місць загалом</div></div>
+    </div>
+    <div class="change-block" id="cbNewSpec"></div>
+    <div class="change-block" id="cbNewBase"></div>
+    <div class="change-block" id="cbRemBase"></div>
+    <div class="change-block" id="cbChg"></div>
+  </section>
+
+  <section class="panel" id="favs">
+    <h2 class="section-title">★ Мій список</h2>
+    <div class="fav-actions" id="favActions" style="display:none">
+      <button class="clear-btn" id="favClear">Очистити список</button>
+      <button class="copy-btn" id="favCopy">📋 Скопіювати як текст</button>
+    </div>
+    <div class="table-card" id="favTableWrap">
+      <table>
+        <thead><tr><th class="star-col"></th><th>Спеціальність</th><th>Місто</th><th>База / вакансія</th><th style="text-align:center">Місць</th></tr></thead>
+        <tbody id="favBody"></tbody>
+      </table>
+    </div>
+    <div class="fav-empty" id="favEmpty"><div class="fav-empty-star">☆</div><p>Список поки порожній.</p></div>
   </section>
 
 </main>
 
 <script>
-// === КОНФІГУРАЦІЯ API (Твій реальний бекенд) ===
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkAMeybJpQ1RyvVd21wmZJJ8LWOAV4EGh2W6aPX9Q5AKnVfTuRVcg/exec";
-
-let globalForecastData = [];
-let globalBasesList = [];
-
-// === ТЕМА ===
-const themeBtn = document.getElementById('themeToggle');
-let theme = localStorage.getItem('theme') || 'light';
-document.documentElement.setAttribute('data-theme', theme);
-themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
-themeBtn.addEventListener('click', () => {
-  theme = theme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
-  themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
-});
-
-// === ЛОГІКА ПЕРЕМИКАННЯ ВКЛАДОК ===
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  
-  if (tabId === 'live') loadLiveForecast();
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-});
-
-// === ЗАВАНТАЖЕННЯ ДАНИХ (GET-запит до таблиці) ===
-async function fetchInitialData() {
-  try {
-    const response = await fetch(WEB_APP_URL);
-    const data = await response.json();
-    
-    // 1. Заповнюємо ПІБ
-    const pibSelect = document.getElementById('pibSelect');
-    data.students.forEach(name => {
-      pibSelect.add(new Option(name, name));
-    });
-
-    // 2. Заповнюємо списки пріоритетів
-    globalBasesList = data.bases; // Зберігаємо для вкладки "Перелік місць"
-    const selects = document.querySelectorAll('.prio-select');
-    selects.forEach(select => {
-      data.bases.forEach(base => {
-        select.add(new Option(base, base));
-      });
-    });
-
-    // 3. Зберігаємо прогноз
-    globalForecastData = data.forecast;
-    
-    // Відкриваємо форму
-    document.getElementById('loaderUI').style.display = 'none';
-    document.getElementById('formUI').style.display = 'block';
-
-    // Рендеримо довідник баз
-    renderStaticBases();
-
-  } catch (error) {
-    document.getElementById('loaderUI').innerHTML = `<span style="color:var(--red);">Помилка з'єднання з Google Sheets. Перевірте інтернет та оновіть сторінку.</span>`;
-  }
-}
-
-// === БЛОКУВАННЯ ДУБЛІКАТІВ У ФОРМІ ===
-const prioSelects = Array.from(document.querySelectorAll('.prio-select'));
-prioSelects.forEach(select => {
-  select.addEventListener('change', () => {
-    const selectedValues = prioSelects.map(s => s.value).filter(v => v !== "");
-    prioSelects.forEach(s => {
-      Array.from(s.options).forEach(opt => {
-        if (opt.value === "") return;
-        opt.disabled = selectedValues.includes(opt.value) && s.value !== opt.value;
-      });
-    });
-  });
-});
-
-// === ВІДПРАВКА ДАНИХ (POST-запит) ===
-async function submitData() {
-  const pib = document.getElementById('pibSelect').value;
-  const pin = document.getElementById('pinInput').value;
-  const p1 = document.getElementById('p1').value;
-  const btn = document.getElementById('submitBtn');
-  const msg = document.getElementById('statusMsg');
-
-  if (!pib || !pin || !p1) {
-    msg.textContent = "ПІБ, ПІН-код та мінімум 1-й пріоритет є обов'язковими!";
-    msg.className = "status-msg error";
-    return;
-  }
-
-  btn.disabled = true;
-  btn.innerHTML = `<span class="spinner"></span> Відправка в базу...`;
-  msg.style.display = 'none';
-
-  const payload = {
-    pib: pib, pin: pin,
-    p1: document.getElementById('p1').value,
-    p2: document.getElementById('p2').value,
-    p3: document.getElementById('p3').value,
-    p4: document.getElementById('p4').value,
-    p5: document.getElementById('p5').value
-  };
-
-  try {
-    const response = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
-    const result = await response.json();
-
-    if (result.status === "success") {
-      msg.textContent = "✅ Ваш вибір успішно збережено в системі!";
-      msg.className = "status-msg success";
-      document.getElementById('pinInput').value = ""; // Стираємо ПІН заради безпеки
-      // Перезавантажуємо дані у фоні, щоб оновити прогноз
-      fetchInitialData(); 
-    } else {
-      msg.textContent = "Помилка: " + (result.message || "Невірний ПІН-код");
-      msg.className = "status-msg error";
-    }
-  } catch (error) {
-    msg.textContent = "Помилка мережі. Спробуйте ще раз.";
-    msg.className = "status-msg error";
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = "Надіслати вибір";
-}
-
-// === РЕНДЕР ПРОГНОЗУ ===
-function loadLiveForecast() {
-  const tbody = document.getElementById('forecastBody');
-  if (!globalForecastData || globalForecastData.length < 2) return;
-
-  let rowsHtml = '';
-  for (let i = 1; i < globalForecastData.length; i++) {
-    const row = globalForecastData[i];
-    const rank = row[0] || i; 
-    const name = row[1] || "—"; 
-    const statusTxt = row[9] || "Не заповнено"; 
-    const resultBase = row[8] || "—"; 
-
-    let badgeClass = "status-gray";
-    if (statusTxt.toLowerCase().includes("проходить")) badgeClass = "status-green";
-    if (statusTxt.toLowerCase().includes("ризик") || statusTxt.toLowerCase().includes("резерв")) badgeClass = "status-red";
-
-    rowsHtml += `
-      <tr>
-        <td style="font-weight:700;">${rank}</td>
-        <td style="font-weight:600;">${name}</td>
-        <td><span class="status-badge ${badgeClass}">${statusTxt}</span></td>
-        <td style="font-size:0.85rem;">${resultBase}</td>
-      </tr>
-    `;
-  }
-  tbody.innerHTML = rowsHtml;
-}
-
-// === РЕНДЕР ДОВІДНИКА БАЗ ===
-function renderStaticBases() {
-  const tbody = document.getElementById('staticBasesBody');
-  if (!globalBasesList.length) return;
-  
-  let html = '';
-  globalBasesList.forEach(baseStr => {
-    // Парсимо рядок виду: "001 | Хірургія | Ужгород | Лікарня | місць: 2"
-    const parts = baseStr.split(' | ');
-    if (parts.length >= 4) {
-      const spec = parts[1];
-      const city = parts[2];
-      const fac = parts[3];
-      const count = parts[4] ? parts[4].replace('місць: ', '') : '';
-      
-      html += `<tr>
-        <td style="font-weight:600;">${spec}</td>
-        <td><span style="background:var(--moss-light); color:var(--moss-dark); padding:3px 8px; border-radius:10px; font-size:0.8rem; font-weight:600;">${city}</span></td>
-        <td>${fac}</td>
-        <td style="text-align:center; font-weight:700;">${count}</td>
-      </tr>`;
-    }
-  });
-  tbody.innerHTML = html;
-}
-
-// Запускаємо при старті
-fetchInitialData();
-</script>
-</body>
-</html>
+// ==========================================
+// БЛОК 1: СТАРІ ЖОРСТКІ ДАНІ (ДЛЯ КАРТ І ГРАФІКІВ)
+// ==========================================
+const DATA = {"records": [{"spec": "Акушерство та гінекологія", "city": "Хуст", "facShort": "Хустська центральна лікарня імені Віцинського", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО \"ХУСТСЬКА ЦЕНТРАЛЬНА ЛІКАРНЯ ІМЕНІ ВІЦИНСЬКОГО ОСТАПА ПЕТРОВИЧА\" ХУСТСЬКОЇ МІСЬКОЇ РАДИ", "edrpou": "43221703", "vacancy": "Лікар-акушер-гінеколог", "count": 3, "zvo": "Медицина, Педіатрія"}, {"spec": "Загальна практика - сімейна медицина", "city": "Хуст", "facShort": "Хустський центр ПМСД", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО \"ХУСТСЬКИЙ ЦЕНТР ПЕРВИННОЇ МЕДИКО-САНІТАРНОЇ ДОПОМОГИ\" ХУСТСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "39048956", "vacancy": "Лікар загальної практики - сімейний лікар", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Хірургія", "city": "Хуст", "facShort": "Хустська центральна лікарня імені Віцинського", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО \"ХУСТСЬКА ЦЕНТРАЛЬНА ЛІКАРНЯ ІМЕНІ ВІЦИНСЬКОГО ОСТАПА ПЕТРОВИЧА\" ХУСТСЬКОЇ МІСЬКОЇ РАДИ", "edrpou": "43221703", "vacancy": "Лікар-хірург", "count": 1, "zvo": "Медицина"}, {"spec": "Анестезіологія", "city": "Хуст", "facShort": "Хустська центральна лікарня імені Віцинського", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО \"ХУСТСЬКА ЦЕНТРАЛЬНА ЛІКАРНЯ ІМЕНІ ВІЦИНСЬКОГО ОСТАПА ПЕТРОВИЧА\" ХУСТСЬКОЇ МІСЬКОЇ РАДИ", "edrpou": "43221703", "vacancy": "Лікар-анестезіолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Ортопедія і травматологія", "city": "Ужгород", "facShort": "Ужгородська міська багатопрофільна клінічна лікарня", "facFull": "Комунальне некомерційне підприємство \"Ужгородська міська багатопрофільна клінічна лікарня\" Ужгородської міської ради", "edrpou": "40835473", "vacancy": "Лікар-ортопед-травматолог", "count": 5, "zvo": "Медицина, Педіатрія"}, {"spec": "Епідеміологія", "city": "Ужгород", "facShort": "Закарпатський обласний центр контролю та профілактики хвороб", "facFull": "Державна установа \"Закарпатський обласний центр контролю та профілактики хвороб Міністерства охорони здоров'я України\"", "edrpou": "38475462", "vacancy": "Лікар-епідеміолог", "count": 5, "zvo": "Медицина, Педіатрія"}, {"spec": "Неврологія", "city": "Ужгород", "facShort": "Обласний клінічний центр нейрохірургії та неврології", "facFull": "КНП \"Обласний клінічний центр нейрохірургії та неврології\" Закарпатської обласної ради", "edrpou": "33985449", "vacancy": "Лікар-невропатолог", "count": 4, "zvo": "Медицина"}, {"spec": "Дерматовенерологія", "city": "Ужгород", "facShort": "Обласний клінічний фтизіопульмонологічний ЛДЦ", "facFull": "Комунальне некомерційне підприємство «Обласний клінічний фтизіопульмонологічний лікувально-діагностичний центр» Закарпатської обласної ради", "edrpou": "26098930", "vacancy": "Лікар-дерматовенеролог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Офтальмологія", "city": "Ужгород", "facShort": "Закарпатська обласна клінічна лікарня імені Андрія Новака", "facFull": "Комунальне некомерційне підприємство Закарпатська обласна клінічна лікарня імені Андрія Новака Закарпатської обласної ради", "edrpou": "01992156", "vacancy": "Лікар-офтальмолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Отоларингологія", "city": "Ужгород", "facShort": "Обласний клінічний центр нейрохірургії та неврології", "facFull": "КНП \"Обласний клінічний центр нейрохірургії та неврології\" Закарпатської обласної ради", "edrpou": "33985449", "vacancy": "Лікар-отоларинголог", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Анестезіологія", "city": "Ужгород", "facShort": "Ужгородська міська багатопрофільна клінічна лікарня", "facFull": "Комунальне некомерційне підприємство \"Ужгородська міська багатопрофільна клінічна лікарня\" Ужгородської міської ради", "edrpou": "40835473", "vacancy": "Лікар-анестезіолог", "count": 4, "zvo": "Медицина, Педіатрія"}, {"spec": "Фізична та реабілітаційна медицина", "city": "Ужгород", "facShort": "Обласний клінічний центр нейрохірургії та неврології", "facFull": "КНП \"Обласний клінічний центр нейрохірургії та неврології\" Закарпатської обласної ради", "edrpou": "33985449", "vacancy": "Лікар фізичної та реабілітаційної медицини", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Патологічна анатомія", "city": "Ужгород", "facShort": "Закарпатська обласна клінічна лікарня імені Андрія Новака", "facFull": "Комунальне некомерційне підприємство Закарпатська обласна клінічна лікарня імені Андрія Новака Закарпатської обласної ради", "edrpou": "01992156", "vacancy": "Лікар-патологоанатом", "count": 3, "zvo": "Медицина, Педіатрія"}, {"spec": "Медицина невідкладних станів", "city": "Ужгород", "facShort": "Закарпатський центр екстреної меддопомоги та медицини катастроф", "facFull": "Закарпатський центр екстреної медичної допомоги та медицини катастроф Закарпатської обласної ради", "edrpou": "26528843", "vacancy": "Лікар з медицини невідкладних станів", "count": 15, "zvo": "Медицина, Педіатрія"}, {"spec": "Анестезіологія", "city": "Ужгород", "facShort": "Закарпатська обласна клінічна лікарня імені Андрія Новака", "facFull": "Комунальне некомерційне підприємство Закарпатська обласна клінічна лікарня імені Андрія Новака Закарпатської обласної ради", "edrpou": "01992156", "vacancy": "Лікар-анестезіолог", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Анестезіологія", "city": "Ужгород", "facShort": "Закарпатський протипухлинний центр", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ЗАКАРПАТСЬКИЙ ПРОТИПУХЛИННИЙ ЦЕНТР» ЗАКАРПАТСЬКОЇ ОБЛАСНОЇ РАДИ", "edrpou": "01992147", "vacancy": "Лікар-анестезіолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Акушерство та гінекологія", "city": "Ужгород", "facShort": "Ужгородська міська багатопрофільна клінічна лікарня", "facFull": "Комунальне некомерційне підприємство \"Ужгородська міська багатопрофільна клінічна лікарня\" Ужгородської міської ради", "edrpou": "40835473", "vacancy": "Лікар-акушер-гінеколог", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Судово-медична експертиза", "city": "Ужгород", "facShort": "Закарпатське обласне бюро судово-медичної експертизи", "facFull": "Державна спеціалізована установа «Закарпатське обласне бюро судово-медичної експертизи»", "edrpou": "01992216", "vacancy": "Лікар-судово-медичний експерт", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Радіологія", "city": "Ужгород", "facShort": "Закарпатська обласна клінічна лікарня імені Андрія Новака", "facFull": "Комунальне некомерційне підприємство Закарпатська обласна клінічна лікарня імені Андрія Новака Закарпатської обласної ради", "edrpou": "01992156", "vacancy": "Лікар-радіолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Радіологія", "city": "Ужгород", "facShort": "Закарпатський протипухлинний центр", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ЗАКАРПАТСЬКИЙ ПРОТИПУХЛИННИЙ ЦЕНТР» ЗАКАРПАТСЬКОЇ ОБЛАСНОЇ РАДИ", "edrpou": "01992147", "vacancy": "Лікар-радіолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Неврологія", "city": "Ужгород", "facShort": "Ужгородська міська багатопрофільна клінічна лікарня", "facFull": "Комунальне некомерційне підприємство \"Ужгородська міська багатопрофільна клінічна лікарня\" Ужгородської міської ради", "edrpou": "40835473", "vacancy": "Лікар-невропатолог", "count": 2, "zvo": "Медицина"}, {"spec": "Внутрішні хвороби", "city": "Ужгород", "facShort": "Обласний клінічний фтизіопульмонологічний ЛДЦ", "facFull": "Комунальне некомерційне підприємство «Обласний клінічний фтизіопульмонологічний лікувально-діагностичний центр» Закарпатської обласної ради", "edrpou": "26098930", "vacancy": "Лікар-терапевт", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Анестезіологія", "city": "Ужгород", "facShort": "Обласний клінічний центр нейрохірургії та неврології", "facFull": "КНП \"Обласний клінічний центр нейрохірургії та неврології\" Закарпатської обласної ради", "edrpou": "33985449", "vacancy": "Лікар-анестезіолог", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Лабораторна діагностика, вірусологія, мікробіологія", "city": "Ужгород", "facShort": "Закарпатська обласна клінічна лікарня імені Андрія Новака", "facFull": "Комунальне некомерційне підприємство Закарпатська обласна клінічна лікарня імені Андрія Новака Закарпатської обласної ради", "edrpou": "01992156", "vacancy": "Лікар-лаборант", "count": 3, "zvo": "Медицина, Технології медичної діагностики та лікування, Педіатрія"}, {"spec": "Інфекційні хвороби", "city": "Ужгород", "facShort": "Обласний клінічний фтизіопульмонологічний ЛДЦ", "facFull": "Комунальне некомерційне підприємство «Обласний клінічний фтизіопульмонологічний лікувально-діагностичний центр» Закарпатської обласної ради", "edrpou": "26098930", "vacancy": "Лікар-інфекціоніст", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Лабораторна діагностика, вірусологія, мікробіологія", "city": "Ужгород", "facShort": "Закарпатський обласний центр контролю та профілактики хвороб", "facFull": "Державна установа \"Закарпатський обласний центр контролю та профілактики Міністерства охорони здоров'я України\"", "edrpou": "38475462", "vacancy": "Лікар-бактеріолог", "count": 1, "zvo": "Медицина, Технології медичної діагностики та лікування, Педіатрія"}, {"spec": "Отоларингологія", "city": "Ужгород", "facShort": "Закарпатська обласна клінічна лікарня імені Андрія Новака", "facFull": "Комунальне некомерційне підприємство Закарпатська обласна клінічна лікарня імені Андрія Новака Закарпатської обласної ради", "edrpou": "01992156", "vacancy": "Лікар-отоларинголог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Фізична та реабілітаційна медицина", "city": "Ужгород", "facShort": "Ужгородська міська багатопрофільна клінічна лікарня", "facFull": "Комунальне некомерційне підприємство \"Ужгородська міська багатопрофільна клінічна лікарня\" Ужгородської міської ради", "edrpou": "40835473", "vacancy": "Лікар фізичної та реабілітаційної медицини", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Внутрішні хвороби", "city": "Ужгород", "facShort": "Ужгородська міська багатопрофільна клінічна лікарня", "facFull": "Комунальне некомерційне підприємство \"Ужгородська міська багатопрофільна клінічна лікарня\" Ужгородської міської ради", "edrpou": "40835473", "vacancy": "Лікар-терапевт", "count": 3, "zvo": "Медицина, Педіатрія"}, {"spec": "Хірургія", "city": "Ужгород", "facShort": "Закарпатський протипухлинний центр", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ЗАКАРПАТСЬКИЙ ПРОТИПУХЛИННИЙ ЦЕНТР» ЗАКАРПАТСЬКОЇ ОБЛАСНОЇ РАДИ", "edrpou": "01992147", "vacancy": "Лікар-хірург", "count": 1, "zvo": "Медицина"}, {"spec": "Педіатрія", "city": "Ужгород", "facShort": "Ужгородська міська багатопрофільна клінічна лікарня", "facFull": "Комунальне некомерційне підприємство \"Ужгородська міська багатопрофільна клінічна лікарня\" Ужгородської міської ради", "edrpou": "40835473", "vacancy": "Лікар-педіатр", "count": 3, "zvo": "Педіатрія, Медицина"}, {"spec": "Фізична та реабілітаційна медицина", "city": "Ужгород", "facShort": "Закарпатська обласна клінічна лікарня імені Андрія Новака", "facFull": "Комунальне некомерційне підприємство Закарпатська обласна клінічна лікарня імені Андрія Новака Закарпатської обласної ради", "edrpou": "01992156", "vacancy": "Лікар фізичної та реабілітаційної медицини", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Радіологія", "city": "Ужгород", "facShort": "Обласний клінічний фтизіопульмонологічний ЛДЦ", "facFull": "Комунальне некомерційне підприємство «Обласний клінічний фтизіопульмонологічний лікувально-діагностичний центр» Закарпатської обласної ради", "edrpou": "26098930", "vacancy": "Лікар-радіолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Лабораторна діагностика, вірусологія, мікробіологія", "city": "Ужгород", "facShort": "Закарпатський обласний центр контролю та профілактики хвороб", "facFull": "Державна установа \"Закарпатський обласний центр контролю та профілактики Міністерства охорони здоров'я України\"", "edrpou": "38475462", "vacancy": "Лікар-вірусолог", "count": 1, "zvo": "Медицина, Технології медичної діагностики та лікування, Педіатрія"}, {"spec": "Анестезіологія", "city": "Ужгород", "facShort": "Обласний клінічний фтизіопульмонологічний ЛДЦ", "facFull": "Комунальне некомерційне підприємство «Обласний клінічний фтизіопульмонологічний лікувально-діагностичний центр» Закарпатської обласної ради", "edrpou": "26098930", "vacancy": "Лікар-анестезіолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Хірургія", "city": "Ужгород", "facShort": "Ужгородська міська багатопрофільна клінічна лікарня", "facFull": "Комунальне некомерційне підприємство \"Ужгородська міська багатопрофільна клінічна лікарня\" Ужгородської міської ради", "edrpou": "40835473", "vacancy": "Лікар-хірург", "count": 3, "zvo": "Медицина"}, {"spec": "Загальна практика - сімейна медицина", "city": "Ужгород", "facShort": "ТОВ «Дбаю»", "facFull": "Товариство з обмеженою відповідальністю \"Дбаю\"", "edrpou": "44990922", "vacancy": "Лікар загальної практики - сімейний лікар", "count": 8, "zvo": "Медицина, Педіатрія"}, {"spec": "Ортопедія і травматологія", "city": "Ужгород", "facShort": "Закарпатська обласна клінічна лікарня імені Андрія Новака", "facFull": "Комунальне некомерційне підприємство Закарпатська обласна клінічна лікарня імені Андрія Новака Закарпатської обласної ради", "edrpou": "01992156", "vacancy": "Лікар-ортопед-травматолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Радіологія", "city": "Тячів", "facShort": "Тячівська районна лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ТЯЧІВСЬКА РАЙОННА ЛІКАРНЯ» ТЯЧІВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992682", "vacancy": "Лікар-радіолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Педіатрія", "city": "Тячів", "facShort": "Тячівська районна лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ТЯЧІВСЬКА РАЙОННА ЛІКАРНЯ» ТЯЧІВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992682", "vacancy": "Лікар-педіатр", "count": 1, "zvo": "Педіатрія, Медицина"}, {"spec": "Неврологія", "city": "Тячів", "facShort": "Тячівська районна лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ТЯЧІВСЬКА РАЙОННА ЛІКАРНЯ» ТЯЧІВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992682", "vacancy": "Лікар-невропатолог", "count": 1, "zvo": "Медицина"}, {"spec": "Медицина невідкладних станів", "city": "Тячів", "facShort": "Тячівська районна лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ТЯЧІВСЬКА РАЙОННА ЛІКАРНЯ» ТЯЧІВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992682", "vacancy": "Лікар з медицини невідкладних станів", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Хірургія", "city": "Тячів", "facShort": "Тячівська районна лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ТЯЧІВСЬКА РАЙОННА ЛІКАРНЯ» ТЯЧІВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992682", "vacancy": "Лікар-хірург", "count": 1, "zvo": "Медицина"}, {"spec": "Загальна практика - сімейна медицина", "city": "Тячів", "facShort": "ЦПМСД Тячівської районної ради", "facFull": "Комунальне некомерційне підприємство Тячівської районної ради \"Центр первинної медико-санітарної допомоги\"", "edrpou": "42043319", "vacancy": "Лікар загальної практики - сімейний лікар", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Анестезіологія", "city": "Тячів", "facShort": "Тячівська районна лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ТЯЧІВСЬКА РАЙОННА ЛІКАРНЯ» ТЯЧІВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992682", "vacancy": "Лікар-анестезіолог", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Інфекційні хвороби", "city": "Тячів", "facShort": "Тячівська районна лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ТЯЧІВСЬКА РАЙОННА ЛІКАРНЯ» ТЯЧІВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992682", "vacancy": "Лікар-інфекціоніст", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Внутрішні хвороби", "city": "Свалява", "facShort": "Свалявська міська лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «СВАЛЯВСЬКА МІСЬКА ЛІКАРНЯ» СВАЛЯВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992653", "vacancy": "Лікар-терапевт", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Загальна практика - сімейна медицина", "city": "Свалява", "facShort": "ЦПМСД Свалявської міської ради", "facFull": "Комунальне некомерційне підприємство \"Центр первинної медико-санітарної допомоги\" Свалявської міської ради Закарпатської області", "edrpou": "38330435", "vacancy": "Лікар загальної практики - сімейний лікар", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Радіологія", "city": "Свалява", "facShort": "Свалявська міська лікарня", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «СВАЛЯВСЬКА МІСЬКА ЛІКАРНЯ» СВАЛЯВСЬКОЇ МІСЬКОЇ РАДИ ЗАКАРПАТСЬКОЇ ОБЛАСТІ", "edrpou": "01992653", "vacancy": "Лікар-радіолог", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Загальна практика - сімейна медицина", "city": "Розівка", "facShort": "ЦПМСД Холмківської сільської ради", "facFull": "КОМУНАЛЬНЕ НЕКОМЕРЦІЙНЕ ПІДПРИЄМСТВО «ЦЕНТР ПЕРВИННОЇ МЕДИКО-САНІТАРНОЇ ДОПОМОГИ ХОЛМКІВСЬКОЇ СІЛЬСЬКОЇ РАДИ УЖГОРОДСЬКОГО РАЙОНУ»", "edrpou": "38466531", "vacancy": "Лікар загальної практики - сімейний лікар", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Медицина невідкладних станів", "city": "Рахів", "facShort": "Рахівська районна лікарня", "facFull": "Комунальне некомерційне підприємство \"Рахівська районна лікарня\" Рахівської міської ради Закарпатської області", "edrpou": "01992624", "vacancy": "Лікар з медицини невідкладних станів", "count": 1, "zvo": "Медицина, Педіатрія"}, {"spec": "Загальна практика - сімейна медицина", "city": "Рахів", "facShort": "Рахівський центр ПМСД", "facFull": "Комунальне некомерційне підприємство \"Рахівський центр первинної медико-санітарної допомоги\" Рахівської міської ради Закарпатської області", "edrpou": "38182296", "vacancy": "Лікар загальної практики - сімейний лікар", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Загальна практика - сімейна медицина", "city": "Нижня Апша", "facShort": "ЦПМСД Солотвинської селищної ради", "facFull": "КНП \"ЦПМСД Солотвинської селищної ради Тячівського району Закарпатської області\"", "edrpou": "44078139", "vacancy": "Лікар загальної практики - сімейний лікар", "count": 4, "zvo": "Медицина, Педіатрія"}, {"spec": "Анестезіологія", "city": "Мукачево", "facShort": "Лікарня Святого Мартина", "facFull": "Комунальне некомерційне підприємство \"Лікарня Святого Мартина\"", "edrpou": "01992831", "vacancy": "Лікар-анестезіолог", "count": 2, "zvo": "Медицина, Педіатрія"}, {"spec": "Неврологія", "city": "Мукачево", "facShort": "Лікарня Святого Мартина", "facFull": "Комунальне некомерційне підприємство \"Лікарня Святого Мартина\"", "edrpou": "01992831", "vacancy": "Лікар-невропатолог", "count": 2, "zvo": "Медицина"}, {"spec": "Загальна практика - сімейна медицина", "city": "Мукачево", "facShort": "Медичний центр «Сім'я»", "facFull": "Комунальне некомерційне підприємство \"Медичний центр Сім'я\"", "edrpou": "40390032", "vacancy": "Лікар загальної практики - сімейний лікар", "count": 3, "zvo": "Медицина, Педіатрія"}, {"spec": "Хірургія", "city": "Мукачево", "facShort": "Лікарня Святого Мартина", "facFull": "Комунальне некомерційне підприємство \"Лікарня Святого Мартина\"", "edrpou": "01992831", "vacancy": "Лікар-хірург", "count": 3, "zvo": "Медицина"},
