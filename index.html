@@ -137,6 +137,8 @@
   .fc-noprio { color: var(--muted); font-style: italic; font-size: 0.86rem; padding: 4px 0; }
   .fc-filterbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--card); padding: 14px 16px; border-radius: 14px; box-shadow: var(--shadow); margin-bottom: 16px; }
   .fc-filterbar select { border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 0.86rem; font-family: inherit; background: var(--paper); color: var(--ink); cursor: pointer; max-width: 100%; }
+  .fc-filter-search { border: 0; background: var(--moss); color: #fff; font-weight: 700; font-family: inherit; font-size: 0.85rem; padding: 9px 18px; border-radius: 10px; cursor: pointer; }
+  .fc-filter-search:hover { background: var(--moss-dark); }
   .fc-filter-reset { border: 0; background: var(--clay-light); color: var(--clay); font-weight: 600; font-family: inherit; font-size: 0.85rem; padding: 9px 14px; border-radius: 10px; cursor: pointer; }
   .fc-filter-count { color: var(--muted); font-size: 0.85rem; margin-left: auto; font-weight: 600; }
   .fc-prio.fc-prio-match { background: rgba(47,107,79,0.12); box-shadow: inset 3px 0 0 var(--moss); border-radius: 8px; padding-left: 9px; }
@@ -299,6 +301,7 @@
         <option value="4">Пріоритет 4</option>
         <option value="5">Пріоритет 5</option>
       </select>
+      <button class="fc-filter-search" id="fcSearch">🔍 Шукати</button>
       <button class="fc-filter-reset" id="fcReset">Скинути фільтри</button>
       <span class="fc-filter-count" id="fcCount"></span>
     </div>
@@ -622,18 +625,22 @@ function updateDropdownLocks() {
       const isCurrent = (sel.value === base);
       const inOther = chosen.includes(base) && !isCurrent;
       opt.style.color = '';
+      opt.style.backgroundColor = '';
       if (isCurrent) {
         opt.disabled = false;
         opt.text = base + '  ✓ ваш вибір';
-        opt.style.color = 'var(--moss)';
+        opt.style.color = 'var(--moss-dark)';
+        opt.style.backgroundColor = 'var(--moss-light)';
       } else if (inOther) {
         opt.disabled = true;
         opt.text = base + '  ✓ обране';
-        opt.style.color = 'var(--muted)';
+        opt.style.color = 'var(--clay)';
+        opt.style.backgroundColor = 'var(--clay-light)';
       } else if (remaining <= 0 && isFinite(myRank)) {
         opt.disabled = true;
         opt.text = base + '  🔴 місць немає';
-        opt.style.color = '#b3402f';
+        opt.style.color = 'var(--red)';
+        opt.style.backgroundColor = 'var(--red-light)';
       } else {
         opt.disabled = false;
         opt.text = base + (isFinite(cap) ? '  · залишилось: ' + remaining : '');
@@ -807,8 +814,12 @@ function buildPrioHtml(pib, matched) {
   raw.forEach((v, idx) => {
     if (!v || !String(v).trim()) return;
     const b = parseBase(v);
-    const hit = matched && matched.indexOf(idx) !== -1;
-    items.push(`<div class="fc-prio${hit ? ' fc-prio-match' : ''}"><span class="fc-prio-n">${idx + 1}</span><span class="fc-prio-code">${escapeHtml(b.code)}</span><span class="fc-prio-txt"><b>${fcHl(b.spec, fcFilters.spec)}</b> · ${fcHl(b.city, fcFilters.city)} · <span class="fc-prio-base">${fcHl(b.base, fcFilters.base)}</span></span></div>`);
+    const hit = matched && matched.indexOf(idx) !== -1; // збіг лише якщо відповідає ВСІМ активним фільтрам разом
+    // Підсвічуємо токени тільки в рядку, що збігся повністю — інакше звичайний текст
+    const spec = hit ? fcHl(b.spec, fcFilters.spec) : escapeHtml(b.spec);
+    const city = hit ? fcHl(b.city, fcFilters.city) : escapeHtml(b.city);
+    const baseName = hit ? fcHl(b.base, fcFilters.base) : escapeHtml(b.base);
+    items.push(`<div class="fc-prio${hit ? ' fc-prio-match' : ''}"><span class="fc-prio-n">${idx + 1}</span><span class="fc-prio-code">${escapeHtml(b.code)}</span><span class="fc-prio-txt"><b>${spec}</b> · ${city} · <span class="fc-prio-base">${baseName}</span></span></div>`);
   });
   if (!items.length) return '<div class="fc-noprio">Студент ще не вказав пріоритети.</div>';
   return items.join('');
@@ -848,19 +859,18 @@ function loadLiveForecast() {
   if (cnt) cnt.textContent = active ? ('Знайдено: ' + shown) : '';
 }
 
-// Зміна фільтрів
-['fcSpec', 'fcCity', 'fcBase', 'fcPrio'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('change', function() {
-    fcFilters = {
-      spec: document.getElementById('fcSpec').value,
-      city: document.getElementById('fcCity').value,
-      base: document.getElementById('fcBase').value,
-      prio: document.getElementById('fcPrio').value
-    };
-    loadLiveForecast();
-  });
-});
+// Застосування фільтрів — ЛИШЕ по кнопці "Шукати"
+function applyFcFilters() {
+  fcFilters = {
+    spec: document.getElementById('fcSpec').value,
+    city: document.getElementById('fcCity').value,
+    base: document.getElementById('fcBase').value,
+    prio: document.getElementById('fcPrio').value
+  };
+  loadLiveForecast();
+}
+const fcSearchBtn = document.getElementById('fcSearch');
+if (fcSearchBtn) fcSearchBtn.addEventListener('click', applyFcFilters);
 const fcResetBtn = document.getElementById('fcReset');
 if (fcResetBtn) fcResetBtn.addEventListener('click', function() {
   fcFilters = { spec: '', city: '', base: '', prio: '' };
