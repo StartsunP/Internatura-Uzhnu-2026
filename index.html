@@ -445,6 +445,8 @@ MAPGEO.roads = {"north":"M160.4,151 C149.6,176.8 80.0,263.3 95.7,305.7 C111.4,34
 MAPGEO.tisa = "M802.7,623.4 C781.5,633.2 714.0,678.6 675.3,682.4 C636.5,686.2 604.7,667.8 570.2,646 C535.8,624.2 502.0,563.8 468.6,551.6 C435.3,539.4 410.4,575.0 370.1,572.6 C329.8,570.3 250.8,543.4 226.9,537.5";
 
 let R = DATA.records;
+let globalRemaining = null;
+let globalUpdated = {};
 const CMP = DATA.comparison;
 R.forEach((r, i) => { r.id = 'p' + i; });
 
@@ -635,8 +637,6 @@ updateFavBadge(); render();
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkAMeybJpQ1RyvVd21wmZJJ8LWOAV4EGh2W6aPX9Q5AKnVfTuRVcg/exec";
 let globalForecastData = [];
 let globalBases = [];
-let globalRemaining = null;
-let globalUpdated = {};
 let fcFilters = { spec: '', city: '', base: '', prio: '' };
 let fcNameQuery = '';
 let globalChoicesMap = {}; 
@@ -973,17 +973,21 @@ if (fcNameEl) fcNameEl.addEventListener('input', function() {
 });
 
 // Дедлайн / блокування подачі
+function fmtDeadline(d) {
+  try { return new Date(d).toLocaleString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+  catch (e) { return d; }
+}
 function applyDeadline(deadline, locked) {
   const banner = document.getElementById('deadlineBanner');
   const submitBtn = document.getElementById('submitBtn');
   if (!banner) return;
   if (locked) {
     banner.style.display = 'block'; banner.className = 'deadline-banner locked';
-    banner.textContent = '⛔ Подача завершена' + (deadline ? ' (' + deadline + ')' : '') + '. Зміни більше не приймаються.';
+    banner.textContent = '⛔ Подача завершена' + (deadline ? ' (' + fmtDeadline(deadline) + ')' : '') + '. Зміни більше не приймаються.';
     if (submitBtn) submitBtn.disabled = true;
   } else if (deadline) {
     banner.style.display = 'block'; banner.className = 'deadline-banner';
-    banner.textContent = '⏳ Подача пріоритетів — до ' + deadline;
+    banner.textContent = '⏳ Подача пріоритетів — до ' + fmtDeadline(deadline);
   } else {
     banner.style.display = 'none';
   }
