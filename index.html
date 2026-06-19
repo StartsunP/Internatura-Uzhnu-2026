@@ -164,6 +164,45 @@
   /* Кнопка "вгору до фільтрів" */
   .to-top { position: fixed; right: 16px; top: 64px; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--moss); color: #fff; font-size: 1.3rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.3); cursor: pointer; display: none; z-index: 60; line-height: 1; }
   .to-top.show { display: block; }
+
+  /* --- Контакт адміна + подяка (футер) --- */
+  .site-footer { max-width: 1100px; margin: 6px auto 28px; padding: 0 20px; }
+  .footer-inner { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px 22px; box-shadow: var(--shadow); }
+  .footer-q { font-weight: 600; color: var(--muted); font-size: 0.9rem; }
+  .tg-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: #229ED9; text-decoration: none; margin-left: 4px; }
+  .tg-link:hover { text-decoration: underline; }
+  .thanks-cta { background: var(--clay); color: #fff; border: 0; border-radius: 11px; padding: 11px 20px; font-weight: 700; font-size: 0.95rem; cursor: pointer; white-space: nowrap; }
+  .thanks-cta:hover { filter: brightness(1.07); }
+  .footer-credit { text-align: center; color: var(--muted); font-size: 0.78rem; margin-top: 13px; }
+
+  /* --- Модалка подяки --- */
+  .donate-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 200; padding: 18px; }
+  .donate-overlay.show { display: flex; }
+  .donate-modal { background: var(--card); border-radius: 22px; max-width: 380px; width: 100%; padding: 26px 24px 24px; position: relative; box-shadow: 0 18px 50px rgba(0,0,0,0.45); text-align: center; max-height: 92vh; overflow-y: auto; }
+  .donate-x { position: absolute; top: 12px; right: 14px; border: 0; background: transparent; font-size: 1.2rem; color: var(--muted); cursor: pointer; line-height: 1; }
+  .donate-cat { font-size: 2.6rem; line-height: 1; }
+  .donate-title { font-size: 1.3rem; font-weight: 800; margin: 4px 0 2px; color: var(--ink); }
+  .donate-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 16px; }
+  .donate-qr { width: 188px; height: 188px; margin: 0 auto 16px; background: #fff; padding: 10px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+  .donate-qr svg { width: 100%; height: 100%; display: block; }
+  .donate-btn { display: block; background: var(--moss); color: #fff; text-decoration: none; border-radius: 12px; padding: 13px; font-weight: 700; font-size: 0.95rem; margin-bottom: 14px; }
+  .donate-btn:hover { filter: brightness(1.07); }
+  .donate-card { background: var(--track); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .donate-card-label { display: block; font-size: 0.74rem; color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+  .donate-card-row { display: flex; align-items: center; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .donate-card-row code { font-size: 1.02rem; font-weight: 700; letter-spacing: 0.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .copy-card { border: 0; background: var(--moss-light); color: var(--moss-dark); border-radius: 8px; padding: 6px 12px; font-weight: 700; font-size: 0.78rem; cursor: pointer; white-space: nowrap; }
+
+  /* --- Плаваюча плашка подяки --- */
+  .thanks-badge { position: fixed; left: 16px; bottom: 18px; z-index: 150; display: none; align-items: center; gap: 11px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 11px 15px 11px 12px; box-shadow: 0 8px 26px rgba(0,0,0,0.28); cursor: pointer; max-width: 260px; }
+  .thanks-badge.show { display: flex; animation: thanksIn 0.5s cubic-bezier(0.2,0.9,0.3,1.3); }
+  @keyframes thanksIn { from { transform: translateY(34px) scale(0.9); opacity: 0; } to { transform: none; opacity: 1; } }
+  .thanks-cat { font-size: 1.9rem; flex-shrink: 0; display: inline-block; animation: thanksWiggle 2.6s ease-in-out infinite; }
+  @keyframes thanksWiggle { 0%,86%,100% { transform: rotate(0); } 90% { transform: rotate(-13deg); } 94% { transform: rotate(13deg); } }
+  .thanks-text { display: flex; flex-direction: column; line-height: 1.25; }
+  .thanks-text b { font-size: 0.9rem; color: var(--ink); }
+  .thanks-text small { font-size: 0.78rem; color: var(--muted); }
+  .thanks-close { position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: var(--ink); color: var(--card); font-size: 0.78rem; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
   /* Кастомний випадаючий список баз (Мій вибір) */
   .cd { position: relative; margin-bottom: 16px; max-width: 760px; }
   .cd-trigger { width: 100%; text-align: left; border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 36px 12px 14px; font-size: 0.92rem; font-family: inherit; background: var(--paper); color: var(--ink); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -502,7 +541,38 @@
 
 </main>
 
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-q">Знайшли помилку чи маєте питання?<a class="tg-link" href="https://t.me/Syrochok" target="_blank" rel="noopener">✈️ Напишіть адміну @Syrochok</a></span>
+    <button class="thanks-cta" type="button" onclick="openDonate()">☕ Подякувати автору</button>
+  </div>
+  <div class="footer-credit">Створено з ❤️ для інтернів Закарпаття · 2026</div>
+</footer>
+
 <button id="toTop" class="to-top" title="Вгору до пошуку / фільтрів" aria-label="Вгору">↑</button>
+
+<!-- Модалка подяки -->
+<div class="donate-overlay" id="donateOverlay">
+  <div class="donate-modal">
+    <button class="donate-x" type="button" onclick="closeDonate()" aria-label="Закрити">✕</button>
+    <div class="donate-cat">🐱</div>
+    <div class="donate-title">На хліб з водою 🍞</div>
+    <div class="donate-sub">Дякую, що підтримуєте проєкт! 💛</div>
+    <div class="donate-qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31 31" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h31v31H0z"/><path stroke="#000000" d="M1 1.5h7m1 0h1m2 0h1m2 0h1m4 0h2m1 0h7M1 2.5h1m5 0h1m1 0h1m1 0h3m3 0h3m1 0h1m1 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m2 0h2m1 0h5m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m1 0h2m2 0h6m1 0h1m2 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m2 0h1m1 0h2m1 0h1m1 0h2m1 0h2m1 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m4 0h1m4 0h1m2 0h2m1 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 8.5h3m5 0h5M1 9.5h1m1 0h2m1 0h3m1 0h1m1 0h2m1 0h1m1 0h2m4 0h1m2 0h1m1 0h2M1 10.5h3m7 0h1m1 0h11m1 0h1m3 0h1M1 11.5h1m2 0h2m1 0h1m1 0h2m3 0h2m3 0h1m1 0h4m2 0h2M1 12.5h1m3 0h2m4 0h1m2 0h1m2 0h1m1 0h1m1 0h1m2 0h1m4 0h1M1 13.5h1m2 0h2m1 0h1m1 0h1m1 0h1m4 0h3m1 0h1m5 0h2M1 14.5h3m1 0h1m4 0h1m1 0h1m1 0h2m1 0h1m2 0h1m2 0h1m3 0h3M1 15.5h2m2 0h3m2 0h2m1 0h1m1 0h1m1 0h2m1 0h3m2 0h1m1 0h3M1 16.5h1m2 0h1m1 0h1m4 0h2m1 0h1m1 0h1m2 0h1m4 0h1m3 0h1M1 17.5h7m2 0h2m1 0h1m2 0h2m1 0h1m1 0h2m1 0h3m1 0h1M2 18.5h1m1 0h3m2 0h2m1 0h1m1 0h1m1 0h1m4 0h1m2 0h1m1 0h3M1 19.5h1m2 0h1m1 0h2m2 0h1m5 0h1m2 0h1m3 0h3m1 0h1M3 20.5h2m3 0h1m4 0h1m2 0h8m3 0h1M2 21.5h1m2 0h3m2 0h1m3 0h1m3 0h10M9 22.5h2m1 0h1m1 0h4m3 0h1m3 0h5M1 23.5h7m1 0h2m2 0h2m2 0h1m2 0h2m1 0h1m1 0h2m1 0h1M1 24.5h1m5 0h1m1 0h2m2 0h1m3 0h1m3 0h1m3 0h2m1 0h1M1 25.5h1m1 0h3m1 0h1m2 0h2m3 0h2m1 0h2m1 0h5m1 0h1M1 26.5h1m1 0h3m1 0h1m1 0h5m1 0h3m2 0h1m1 0h1m1 0h3m2 0h1M1 27.5h1m1 0h3m1 0h1m1 0h1m5 0h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h1M1 28.5h1m5 0h1m3 0h1m1 0h2m2 0h1m3 0h1m1 0h2m1 0h1m1 0h1M1 29.5h7m1 0h3m2 0h2m1 0h1m2 0h2m1 0h2m1 0h1m1 0h1"/></svg></div>
+    <a class="donate-btn" href="https://send.monobank.ua/jar/6aVxPDS5cz" target="_blank" rel="noopener">🔗 Відкрити банку monobank</a>
+    <div class="donate-card">
+      <span class="donate-card-label">💳 Номер картки банки</span>
+      <div class="donate-card-row"><code id="cardNum">4874 1000 3929 2654</code><button class="copy-card" type="button" onclick="copyCard()">Копіювати</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Плаваюча плашка подяки -->
+<div class="thanks-badge" id="thanksBadge" onclick="openDonate()">
+  <button class="thanks-close" type="button" onclick="event.stopPropagation(); closeThanksBadge()" aria-label="Сховати">✕</button>
+  <span class="thanks-cat">🐈</span>
+  <span class="thanks-text"><b>Сподобався сайт?</b><small>Підтримай автора ☕</small></span>
+</div>
 
 <script>
 // ==========================================
@@ -1268,6 +1338,46 @@ thBtn.addEventListener('click', () => {
 });
 
 fetchInitialData();
+
+// ==========================================
+// БЛОК 4: ПОДЯКА (контакт адміна + monobank)
+// ==========================================
+function openDonate() {
+  const o = document.getElementById('donateOverlay');
+  if (o) o.classList.add('show');
+  closeThanksBadge();
+}
+function closeDonate() {
+  const o = document.getElementById('donateOverlay');
+  if (o) o.classList.remove('show');
+}
+function copyCard() {
+  const pretty = '4874 1000 3929 2654';
+  if (navigator.clipboard) navigator.clipboard.writeText(pretty);
+  const b = document.querySelector('.copy-card');
+  if (b) { const t = b.textContent; b.textContent = '✓ Скопійовано'; setTimeout(() => b.textContent = t, 1500); }
+}
+function showThanksBadge() {
+  const o = document.getElementById('donateOverlay');
+  if (o && o.classList.contains('show')) return; // не заважати, коли модалка відкрита
+  const b = document.getElementById('thanksBadge');
+  if (b) { b.classList.remove('show'); void b.offsetWidth; b.classList.add('show'); }
+}
+function closeThanksBadge() {
+  const b = document.getElementById('thanksBadge');
+  if (b) b.classList.remove('show');
+}
+// Закриття модалки: клік по фону + Esc
+(function () {
+  const o = document.getElementById('donateOverlay');
+  if (o) o.addEventListener('click', function (e) { if (e.target === o) closeDonate(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDonate(); });
+})();
+// Розклад показу плашки: через 5, 10, 15, 20, 30 хв, далі кожні 30 хв (навіть після закриття)
+(function () {
+  [5, 10, 15, 20, 30].forEach(m => setTimeout(showThanksBadge, m * 60 * 1000));
+  setTimeout(() => setInterval(showThanksBadge, 30 * 60 * 1000), 30 * 60 * 1000);
+})();
 </script>
 </body>
 </html>
