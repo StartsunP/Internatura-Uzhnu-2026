@@ -664,6 +664,11 @@ MAPGEO.tisa = "M802.7,623.4 C781.5,633.2 714.0,678.6 675.3,682.4 C636.5,686.2 60
 let R = DATA.records;
 let globalRemaining = null;
 let globalUpdated = {};
+const OUTSIDE = 'За межами Закарпаття'; // спец-варіант пріоритету (синхронізовано з бекендом)
+let globalStats = null; // реальна статистика з аркуша "Рейтинг"
+let globalForecastData = []; // оголошено вгорі (БЛОК 2) — використовується при парсингу в buildLiveStats/render
+let globalBases = [];
+let globalChoicesMap = {};
 R.forEach((r, i) => { r.id = 'p' + i; });
 
 // ==========================================
@@ -910,8 +915,7 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkA
 
 // --- Авторизація (самореєстрація з видачею ПІНу) ---
 let authedPib = null, authedPin = null, deadlineLocked = false;
-const OUTSIDE = 'За межами Закарпаття'; // спец-варіант пріоритету (синхронізовано з бекендом)
-let globalStats = null; // реальна статистика з аркуша "Рейтинг"
+// OUTSIDE та globalStats оголошено вгорі (БЛОК 2), бо використовуються при парсингу
 // POST до Apps Script БЕЗ кастомних заголовків (text/plain) — щоб не було CORS-preflight
 function apiPost(obj) { return fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(obj) }).then(r => r.json()); }
 function setAuthed(pib, pin) {
@@ -999,11 +1003,8 @@ async function doLogin() {
   } catch (e) { alert('Помилка мережі. Спробуйте ще раз.'); }
   btn.disabled = false; btn.innerHTML = 'Увійти';
 }
-let globalForecastData = [];
-let globalBases = [];
 let fcFilters = { spec: '', city: '', base: '', prio: '' };
 let fcNameQuery = '';
-let globalChoicesMap = {}; 
 
 function switchTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
