@@ -77,6 +77,13 @@
   .status-gray { background: var(--track); color: var(--muted); }
   .status-red { background: var(--red-light); color: var(--red); }
   .auth-note { display: block; font-size: 0.75rem; color: var(--muted); margin-top: -10px; margin-bottom: 16px; font-weight: 600;}
+  .auth-zone { margin: 4px 0 14px; }
+  .pin-reveal-box { background: var(--moss-light); border: 1.5px solid var(--moss); border-radius: 14px; padding: 16px; text-align: center; }
+  .pin-reveal-label { font-weight: 700; color: var(--moss-dark); font-size: 0.9rem; }
+  .pin-code { font-size: 2.2rem; font-weight: 800; letter-spacing: 0.18em; color: var(--ink); margin: 8px 0; font-variant-numeric: tabular-nums; }
+  .copy-pin { background: var(--moss); color: #fff; border: 0; border-radius: 9px; padding: 8px 18px; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
+  .copy-pin:active { transform: scale(0.97); }
+  .pin-warn { font-size: 0.78rem; color: var(--clay); margin-top: 12px; font-weight: 600; line-height: 1.45; }
 
   /* ВІДНОВЛЕННЯ КОНТРАСТУ В ТЕМНІЙ ТЕМІ ДЛЯ СТАТУСІВ */
   [data-theme="dark"] .status-green { background: rgba(79, 157, 119, 0.2); color: #7bb494; }
@@ -325,7 +332,7 @@
 
   <section class="panel active" id="choice">
     <h2 class="section-title">Форма подачі пріоритетів</h2>
-    <p class="section-sub">Оберіть своє ПІБ, введіть 4-значний ПІН-код та розставте 5 баз у порядку бажаності.</p>
+    <p class="section-sub">Оберіть своє ПІБ. Перший вхід — система видасть вам персональний ПІН-код; надалі заходьте за ним із будь-якого пристрою та розставляйте 5 баз у порядку бажаності.</p>
 
     <div class="api-card">
       <div id="loaderUI" style="text-align:center; color:var(--muted); padding: 20px;">
@@ -338,9 +345,24 @@
         <label>Ваше ПІБ (згідно з рейтингом):</label>
         <select id="pibSelect"><option value="">Оберіть ПІБ...</option></select>
 
-        <label>Ваш ПІН-код:</label>
-        <input type="text" id="pinInput" placeholder="4 цифри" maxlength="4" inputmode="numeric">
-        <span class="auth-note" id="authNote"></span>
+        <div id="authZone" class="auth-zone">
+          <div class="auth-note" id="authHint">Оберіть своє ПІБ зі списку вище, щоб увійти або зареєструватися.</div>
+
+          <div id="authRegister" style="display:none;">
+            <p class="auth-note" style="margin-bottom:10px;">👋 Це ваш перший вхід. Натисніть кнопку — система згенерує ваш персональний ПІН-код. Він знадобиться, щоб заходити й редагувати вибір з інших пристроїв.</p>
+            <button class="submit-btn" id="registerBtn" type="button" onclick="doRegister()">🔑 Отримати ПІН-код</button>
+          </div>
+
+          <div id="authLogin" style="display:none;">
+            <label>Ваш ПІН-код:</label>
+            <input type="text" id="pinInput" placeholder="6 цифр" maxlength="6" inputmode="numeric" autocomplete="off">
+            <button class="submit-btn" id="loginBtn" type="button" onclick="doLogin()" style="margin-top:8px;">Увійти</button>
+            <span class="auth-note" style="margin-top:10px;">Забули ПІН? Зверніться до адміністратора, щоб його скинули.</span>
+          </div>
+
+          <div id="authPinReveal" class="pin-reveal" style="display:none;"></div>
+          <div class="auth-note" id="authOk" style="display:none; color:var(--moss-dark);"></div>
+        </div>
         <span class="last-updated" id="lastUpdated"></span>
 
         <hr style="border:0; border-top:1px solid var(--line); margin: 24px 0;">
@@ -356,7 +378,7 @@
         <select class="prio-select" id="p5"><option value="">Оберіть базу...</option></select>
 
         <div class="btn-group">
-          <button class="submit-btn" id="submitBtn" onclick="submitData()">Зберегти мій вибір</button>
+          <button class="submit-btn" id="submitBtn" onclick="submitData()" disabled>Зберегти мій вибір</button>
           <button class="cancel-btn" id="cancelBtn" onclick="resetForm()">Скасувати зміни</button>
         </div>
         <div id="statusMsg" class="status-msg"></div>
@@ -683,6 +705,96 @@ updateFavBadge(); render();
 // БЛОК 3: API, АВТОРИЗАЦІЯ ТА АВТОЗАПОВНЕННЯ 
 // ==========================================
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkAMeybJpQ1RyvVd21wmZJJ8LWOAV4EGh2W6aPX9Q5AKnVfTuRVcg/exec";
+
+// --- Авторизація (самореєстрація з видачею ПІНу) ---
+let authedPib = null, authedPin = null, deadlineLocked = false;
+// POST до Apps Script БЕЗ кастомних заголовків (text/plain) — щоб не було CORS-preflight
+function apiPost(obj) { return fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(obj) }).then(r => r.json()); }
+function setAuthed(pib, pin) {
+  authedPib = pib; authedPin = pin;
+  localStorage.setItem('auth_pib', pib);
+  localStorage.setItem('auth_pin', pin);
+  const btn = document.getElementById('submitBtn'); if (btn) btn.disabled = deadlineLocked;
+}
+function clearAuthed() {
+  authedPib = null; authedPin = null;
+  const btn = document.getElementById('submitBtn'); if (btn) btn.disabled = true;
+}
+function showAuthState(state, html) {
+  ['authHint', 'authRegister', 'authLogin', 'authPinReveal', 'authOk'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  const map = { hint: 'authHint', register: 'authRegister', login: 'authLogin', reveal: 'authPinReveal', ok: 'authOk' };
+  const el = document.getElementById(map[state]); if (!el) return;
+  el.style.display = 'block';
+  if ((state === 'ok' || state === 'reveal') && html != null) el.innerHTML = html;
+}
+function copyPin(p) {
+  if (navigator.clipboard) navigator.clipboard.writeText(p);
+  const b = document.querySelector('.copy-pin'); if (b) { const t = b.textContent; b.textContent = '✓ Скопійовано'; setTimeout(() => b.textContent = t, 1500); }
+}
+
+// Реакція на вибір ПІБ: перевірити реєстрацію, авто-вхід або показати потрібний стан
+async function onPibChange() {
+  const pib = document.getElementById('pibSelect').value;
+  clearAuthed();
+  loadUserChoices(pib);            // показати поточний вибір (перегляд)
+  showLastUpdated(pib);
+  if (!pib) { showAuthState('hint'); return; }
+  showAuthState('hint');
+  try {
+    const res = await apiPost({ action: 'check', pib: pib });
+    if (!res || res.status !== 'success') { showAuthState('login'); return; }
+    if (res.registered) {
+      const sp = localStorage.getItem('auth_pib'), spin = localStorage.getItem('auth_pin');
+      if (sp === pib && spin) {     // тихий вхід за збереженим ПІНом на цьому пристрої
+        const lg = await apiPost({ action: 'login', pib: pib, pin: spin });
+        if (lg.status === 'success') { setAuthed(pib, spin); showAuthState('ok', '✓ Ви увійшли як <b>' + escapeHtml(pib) + '</b> (збережено на цьому пристрої).'); return; }
+        localStorage.removeItem('auth_pin');
+      }
+      const pi = document.getElementById('pinInput'); if (pi) pi.value = '';
+      showAuthState('login');
+    } else {
+      showAuthState('register');
+    }
+  } catch (e) { showAuthState('login'); }
+}
+
+async function doRegister() {
+  const pib = document.getElementById('pibSelect').value; if (!pib) return;
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Створення...';
+  try {
+    const res = await apiPost({ action: 'register', pib: pib });
+    if (res.status === 'success' && res.pin) {
+      setAuthed(pib, res.pin);
+      showAuthState('reveal',
+        '<div class="pin-reveal-box"><div class="pin-reveal-label">✅ Готово! Ваш персональний ПІН-код:</div>' +
+        '<div class="pin-code">' + res.pin + '</div>' +
+        '<button class="copy-pin" type="button" onclick="copyPin(\'' + res.pin + '\')">📋 Скопіювати</button>' +
+        '<div class="pin-warn">⚠️ Обов\'язково збережіть цей код. Він потрібен, щоб увійти й редагувати вибір з іншого пристрою. Якщо загубите — зверніться до адміністратора, щоб його скинули.</div></div>');
+    } else if (res.code === 'already') {
+      showAuthState('login');
+    } else {
+      showAuthState('register'); alert(res.message || 'Не вдалося зареєструватися. Спробуйте ще раз.');
+    }
+  } catch (e) { alert('Помилка мережі. Спробуйте ще раз.'); }
+  btn.disabled = false; btn.innerHTML = '🔑 Отримати ПІН-код';
+}
+
+async function doLogin() {
+  const pib = document.getElementById('pibSelect').value;
+  const pin = (document.getElementById('pinInput').value || '').trim();
+  if (!pib || !pin) { alert('Введіть ПІН-код.'); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Вхід...';
+  try {
+    const res = await apiPost({ action: 'login', pib: pib, pin: pin });
+    if (res.status === 'success') {
+      setAuthed(pib, pin);
+      showAuthState('ok', '✓ Ви увійшли як <b>' + escapeHtml(pib) + '</b>.');
+    } else { alert(res.message || 'Невірний ПІН'); }
+  } catch (e) { alert('Помилка мережі. Спробуйте ще раз.'); }
+  btn.disabled = false; btn.innerHTML = 'Увійти';
+}
 let globalForecastData = [];
 let globalBases = [];
 let fcFilters = { spec: '', city: '', base: '', prio: '' };
@@ -788,12 +900,8 @@ function loadUserChoices(pib) {
   updateDropdownLocks();
 }
 
-// При виборі імені зі списку — підтягуємо вибір і оновлюємо доступність баз під його рейтинг
-document.getElementById('pibSelect').addEventListener('change', function() {
-  loadUserChoices(this.value);
-  updateDropdownLocks();
-  showLastUpdated(this.value);
-});
+// При виборі імені зі списку — авторизація (реєстрація/вхід) + підтягуємо вибір
+document.getElementById('pibSelect').addEventListener('change', onPibChange);
 
 // Функція СКАСУВАННЯ змін (повернення до стану бази)
 function resetForm() {
@@ -837,21 +945,12 @@ async function fetchInitialData() {
     document.getElementById('formUI').style.display = 'block';
 
     const savedPib = localStorage.getItem('auth_pib');
-    const savedPin = localStorage.getItem('auth_pin');
-    
-    if (savedPib) {
-      // Якщо збережений студент є у відфільтрованому списку
-      if (data.students.includes(savedPib)) {
-        document.getElementById('pibSelect').value = savedPib;
-        loadUserChoices(savedPib); 
-        document.getElementById('authNote').innerHTML = "✓ Дані збережено на цьому пристрої.";
-      } else {
-        // Якщо студент натиснув відмову, його вже немає в списку, чистимо пам'ять
-        localStorage.removeItem('auth_pib');
-      }
-    }
-    if (savedPin) {
-      document.getElementById('pinInput').value = savedPin;
+    if (savedPib && data.students.includes(savedPib)) {
+      document.getElementById('pibSelect').value = savedPib;
+      onPibChange(); // авто-вхід за збереженим ПІНом на цьому пристрої
+    } else {
+      if (savedPib) localStorage.removeItem('auth_pib'); // студента вже немає в списку (відмова)
+      showAuthState('hint');
     }
 
     updateDropdownLocks(); // показати залишок місць одразу після завантаження
@@ -863,29 +962,27 @@ async function fetchInitialData() {
 
 async function submitData() {
   const pib = document.getElementById('pibSelect').value;
-  const pin = document.getElementById('pinInput').value;
   const btn = document.getElementById('submitBtn'), msg = document.getElementById('statusMsg');
-  
+
+  if (!pib || authedPib !== pib || !authedPin) {
+    msg.textContent = "Спочатку отримайте ПІН-код або увійдіть."; msg.className = "status-msg error"; msg.style.display = 'block'; return;
+  }
   const payload = {
-    pib: pib, pin: pin,
+    action: 'save', pib: pib, pin: authedPin,
     p1: document.getElementById('p1').value, p2: document.getElementById('p2').value,
     p3: document.getElementById('p3').value, p4: document.getElementById('p4').value, p5: document.getElementById('p5').value
   };
-  if (!payload.pib || !payload.pin || !payload.p1) { msg.textContent = "ПІБ, ПІН та Пріоритет 1 обов'язкові!"; msg.className = "status-msg error"; return; }
-  
+  if (!payload.p1) { msg.textContent = "Пріоритет 1 обов'язковий!"; msg.className = "status-msg error"; msg.style.display = 'block'; return; }
+
   btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Відправка...`; msg.style.display = 'none';
   try {
-    const response = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
-    const result = await response.json();
+    const result = await apiPost(payload);
     if (result.status === "success") {
-      msg.textContent = "✅ Збережено!"; msg.className = "status-msg success";
-      localStorage.setItem('auth_pib', pib);
-      localStorage.setItem('auth_pin', pin);
-      document.getElementById('authNote').innerHTML = "✓ Дані збережено на цьому пристрої.";
+      msg.textContent = "✅ Збережено!"; msg.className = "status-msg success"; msg.style.display = 'block';
       if (result.updated) { globalUpdated[pib] = result.updated; showLastUpdated(pib); }
       fetchInitialData();
-    } else { msg.textContent = "Помилка: " + (result.message || "Невірний ПІН"); msg.className = "status-msg error"; }
-  } catch (e) { msg.textContent = "Помилка мережі."; msg.className = "status-msg error"; }
+    } else { msg.textContent = "Помилка: " + (result.message || "Невірний ПІН"); msg.className = "status-msg error"; msg.style.display = 'block'; }
+  } catch (e) { msg.textContent = "Помилка мережі."; msg.className = "status-msg error"; msg.style.display = 'block'; }
   btn.disabled = false; btn.innerHTML = "Зберегти мій вибір";
 }
 
@@ -1030,6 +1127,7 @@ function fmtDeadline(d) {
 function applyDeadline(deadline, locked) {
   const banner = document.getElementById('deadlineBanner');
   const submitBtn = document.getElementById('submitBtn');
+  deadlineLocked = !!locked;
   if (!banner) return;
   if (locked) {
     banner.style.display = 'block'; banner.className = 'deadline-banner locked';
