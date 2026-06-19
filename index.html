@@ -108,6 +108,10 @@
   .fac-cell { color: var(--ink); }
   .fac-cell .vac { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
   .count-badge { display: inline-block; min-width: 30px; text-align: center; font-weight: 700; background: var(--moss); color: #fff; border-radius: 8px; padding: 3px 9px; font-size: 0.88rem; }
+  .rem-pill { display: inline-block; margin-top: 5px; font-size: 0.7rem; font-weight: 700; padding: 1px 7px; border-radius: 8px; background: var(--moss-light); color: var(--moss-dark); white-space: nowrap; }
+  .rem-pill.rem-0 { background: var(--red-light); color: var(--red); }
+  [data-theme="dark"] .rem-pill { background: rgba(79,157,119,0.2); color: #7bb494; }
+  [data-theme="dark"] .rem-pill.rem-0 { background: rgba(224,122,104,0.2); color: #e8a095; }
   .zvo-tag { display: inline-block; font-size: 0.72rem; color: var(--gold); font-weight: 600; border: 1px solid #e8d5b0; border-radius: 6px; padding: 1px 6px; margin: 1px 2px 1px 0; white-space: nowrap; }
   .star-btn { border: 0; background: transparent; cursor: pointer; font-size: 1.15rem; color: #cdd3cb; transition: transform 0.12s; }
   .star-btn.on { color: var(--gold); }
@@ -141,6 +145,14 @@
   .fc-filter-search:hover { background: var(--moss-dark); }
   .fc-filter-reset { border: 0; background: var(--clay-light); color: var(--clay); font-weight: 600; font-family: inherit; font-size: 0.85rem; padding: 9px 14px; border-radius: 10px; cursor: pointer; }
   .fc-filter-count { color: var(--muted); font-size: 0.85rem; margin-left: auto; font-weight: 600; }
+  .fc-name { flex: 1; min-width: 180px; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 0.86rem; font-family: inherit; background: var(--paper); color: var(--ink); }
+  .fc-row.fc-namehit > td { background: rgba(184,137,63,0.28) !important; }
+  .deadline-banner { padding: 12px 14px; border-radius: 11px; font-weight: 700; font-size: 0.9rem; margin-bottom: 16px; background: var(--clay-light); color: var(--clay); text-align: center; }
+  .deadline-banner.locked { background: var(--red-light); color: var(--red); }
+  .last-updated { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 6px; margin-bottom: 10px; font-weight: 600; }
+  body.force-pc { min-width: 1040px; }
+  body.force-mobile .wrap { max-width: 460px; }
+  body.force-mobile nav.tabs .wrap { max-width: 460px; }
   .fc-prio.fc-prio-match { background: rgba(47,107,79,0.12); box-shadow: inset 3px 0 0 var(--moss); border-radius: 8px; padding-left: 9px; }
   [data-theme="dark"] .fc-prio.fc-prio-match { background: rgba(79,157,119,0.18); }
   .fc-result-hit { box-shadow: inset 3px 0 0 var(--gold); padding-left: 9px; display: inline-block; border-radius: 6px; }
@@ -242,6 +254,7 @@
     <button class="tab-btn" data-tab="stats">Статистика</button>
     <button class="tab-btn" data-tab="changes">Що змінилось</button>
     <button class="tab-btn fav-tab" data-tab="favs">★ Мій список <span class="fav-badge" id="favBadge">0</span></button>
+    <button class="theme-toggle" id="viewToggle" title="Версія: авто / ПК / телефон">🖥️</button>
     <button class="theme-toggle" id="themeToggle" title="Світла / темна тема">🌙</button>
   </div>
 </nav>
@@ -259,12 +272,14 @@
       </div>
 
       <div id="formUI" style="display:none;">
+        <div id="deadlineBanner" class="deadline-banner" style="display:none;"></div>
         <label>Ваше ПІБ (згідно з рейтингом):</label>
         <select id="pibSelect"><option value="">Оберіть ПІБ...</option></select>
-        
+
         <label>Ваш ПІН-код:</label>
         <input type="text" id="pinInput" placeholder="4 цифри" maxlength="4" inputmode="numeric">
         <span class="auth-note" id="authNote"></span>
+        <span class="last-updated" id="lastUpdated"></span>
 
         <hr style="border:0; border-top:1px solid var(--line); margin: 24px 0;">
         <label>Пріоритет 1 (Найбажаніший):</label>
@@ -291,6 +306,7 @@
     <h2 class="section-title">Живий прогноз розподілу</h2>
     <p class="section-sub">Автоматичний розрахунок на основі поточних заявок та вашого рейтингового балу.</p>
     <div class="fc-filterbar">
+      <input type="text" id="fcName" class="fc-name" placeholder="🔎 Знайти за ПІБ…" autocomplete="off">
       <select id="fcSpec"><option value="">Усі спеціальності</option></select>
       <select id="fcCity"><option value="">Усі міста</option></select>
       <select id="fcBase"><option value="">Усі бази</option></select>
@@ -425,10 +441,10 @@ const MAPGEO = {"region": "M150.9,252.2 C150.4,249.1 146.4,230.5 146.6,224.3 C14
 MAPGEO.viewBox = "0 0 1000 749";
 MAPGEO.region = "M40,418.3 L65.5,414.5 L78.1,435.6 L107.7,462.9 L107.9,475.9 L114.5,488 L150.4,512 L170.4,510.8 L199.7,556.1 L218.9,593.6 L247.8,593.3 L270.2,588.3 L284.8,583.6 L289.1,588.4 L295.4,594.7 L297.5,599.6 L298.9,604.1 L300.9,605.7 L306.1,608.5 L307.6,612.5 L307.2,615.5 L307.6,618.2 L307.8,619.2 L309.2,621.3 L311.5,622.3 L313.3,621.4 L312,636.8 L309.1,645 L302.5,650.3 L298.5,657.3 L300.4,659.4 L299.9,661.5 L303.7,661.8 L305.4,663.4 L306.5,664.8 L307.8,665.8 L309.9,665.5 L311.5,665.6 L312.2,669.3 L314.1,671.4 L319.1,670.1 L318.8,674.2 L320,676.8 L322.4,675.2 L324.5,674.1 L326.3,675.3 L326.8,674.4 L327.6,674 L328.9,675.8 L329.3,674.3 L331.2,674.5 L337.4,670.9 L338.7,669.5 L336.6,660.6 L331.2,650.9 L330.6,642.9 L344.4,647.5 L355.8,650 L362.8,655.1 L369.7,652.1 L389,648.6 L392.1,642.5 L395.5,637.7 L399,631.7 L399.7,622.6 L400,617.7 L399.3,613.7 L403.3,609.4 L401.5,603.1 L402.6,601.7 L410.2,599 L416.7,588 L423.1,585.2 L427.9,593.8 L435.8,598.4 L465.1,623.9 L515,657.9 L555.5,641.9 L576.5,647.9 L595.7,651.2 L619.4,655.3 L636.2,652.7 L659.6,661 L668.8,673.5 L679,689.6 L696,681.6 L712.2,672.1 L725.5,673.2 L743.1,678.9 L763.7,686.7 L775.4,698.9 L789.7,696.3 L845.6,694.5 L884.3,671.7 L916.7,678.3 L937.7,655.7 L941.1,642.7 L951.6,631.1 L956.6,627.8 L957.9,619.2 L955.2,613.8 L951.5,607.7 L943.4,598.3 L916.7,567.9 L921,544.3 L929.1,531.8 L921.6,520.8 L917,518.6 L907.9,508.4 L909.3,499.6 L907,494.6 L902.1,491.4 L898,487.7 L893.5,483.7 L891.2,477.6 L886.6,476.2 L883.6,471.5 L873,464 L861.6,456.3 L858.6,446.6 L852.7,436.5 L847.7,435 L834.4,429.9 L832,443.4 L823.4,456.8 L806,448.4 L792.3,442.3 L783.8,432.5 L781.7,411.4 L776.4,400.9 L775.2,389.5 L778.8,382.3 L773.2,376.8 L772.2,370.6 L774.1,365.2 L776.7,357.5 L768.4,355.2 L760.8,362 L751.1,364.5 L743.2,369.3 L731.1,371.2 L725.4,374.3 L719.4,384.8 L717,395.1 L708.6,394.2 L694.9,385.4 L698.3,367.6 L697.7,358.5 L698.2,350 L701,343.5 L699,343.1 L696.5,342.4 L695.4,340.4 L686.8,342.5 L680.2,341.5 L668.3,336.6 L662.2,329.5 L655.8,327.9 L651.3,321.6 L649.4,313.8 L652.6,302.1 L649.6,294.5 L642.7,292.9 L637.9,292.8 L633.5,291.4 L630.3,295.3 L626.3,295.9 L623.5,296.1 L615.4,292.5 L611,286.9 L608.3,282.6 L606.9,280.3 L603.2,277 L598.6,272.9 L594.6,268.6 L593,260.7 L587.4,258 L582.7,258.2 L578.1,253.6 L572,249.1 L562.9,248.1 L552.7,246.2 L546,243.4 L535.6,249.6 L517.3,246.4 L511,242.2 L503.7,240.5 L498.1,236.4 L494.6,224.4 L490.4,223.8 L485.4,228.5 L478.9,231.8 L472.5,227.3 L466.8,221.7 L462.2,222.3 L456.5,227.2 L447.4,228.8 L439.2,227.4 L432.6,227.1 L430,218.9 L425.7,211.1 L424.4,203.4 L420.1,195.7 L415.6,189.2 L408.7,186.8 L407.3,176 L401.5,174.7 L394.8,170.7 L389.8,175.3 L383.9,175.7 L378,177.9 L371.5,178.7 L366,179.5 L361.6,186.4 L355.7,186.2 L350.4,181.6 L348.4,174.5 L348,169.1 L346.9,163.7 L332.5,156.3 L324.6,149.9 L318.8,144.1 L316.8,135.6 L311.8,126.2 L312.8,117.6 L320.2,113.2 L324.8,113.1 L328.8,104.6 L318,92.8 L298.1,81.7 L272.2,64.4 L253.3,65.6 L233.1,68 L218.1,49.1 L200,43.5 L183.7,94 L146.9,133.4 L130.2,173.3 L125.5,216.3 L119.6,249.3 L88.7,286.6 L59.1,314 L45.6,373.5 Z";
 MAPGEO.cities = {"Ужгород":[95.7,305.7],"Мукачево":[254.5,405.7],"Берегове":[226.9,537.5],"Виноградів":[370.1,572.6],"Тячів":[570.2,646],"Хуст":[468.6,551.6],"Свалява":[358,345.5],"Нижня Апша":[675.3,682.4],"Міжгір’я":[545.1,356.3],"Рахів":[802.7,623.4],"Розівка":[126.1,328.4],"Великий Березний":[160.4,151],"Іршава":[374,474.7],"Велика Бийгань":[176.3,511.4]};
-MAPGEO.roads = {"north":"M160.4,151 L95.7,305.7 L254.5,405.7 L358,345.5","valley":"M226.9,537.5 L370.1,572.6 L468.6,551.6 L570.2,646 L802.7,623.4","uzh_mk":"M95.7,305.7 L226.9,537.5","mk_irsh":"M254.5,405.7 L374,474.7 L468.6,551.6","khust_mizh":"M468.6,551.6 L545.1,356.3","tyachiv_apsha":"M570.2,646 L675.3,682.4","uzh_roz":"M95.7,305.7 L126.1,328.4","ber_byi":"M226.9,537.5 L176.3,511.4"};
-MAPGEO.tisa = "M802.7,623.4 L675.3,682.4 L570.2,646 L468.6,551.6 L370.1,572.6 L226.9,537.5";
+MAPGEO.roads = {"north":"M160.4,151 C149.6,176.8 80.0,263.3 95.7,305.7 C111.4,348.1 210.8,399.1 254.5,405.7 C298.2,412.3 340.8,355.5 358,345.5","valley":"M226.9,537.5 C250.8,543.4 329.8,570.3 370.1,572.6 C410.4,575.0 435.3,539.4 468.6,551.6 C502.0,563.8 514.5,634.0 570.2,646 C625.9,658.0 764.0,627.2 802.7,623.4","uzh_mk":"M95.7,305.7 L226.9,537.5","mk_irsh":"M254.5,405.7 C274.4,417.2 338.3,450.4 374,474.7 C409.7,499.0 452.8,538.8 468.6,551.6","khust_mizh":"M468.6,551.6 L545.1,356.3","tyachiv_apsha":"M570.2,646 L675.3,682.4","uzh_roz":"M95.7,305.7 L126.1,328.4","ber_byi":"M226.9,537.5 L176.3,511.4"};
+MAPGEO.tisa = "M802.7,623.4 C781.5,633.2 714.0,678.6 675.3,682.4 C636.5,686.2 604.7,667.8 570.2,646 C535.8,624.2 502.0,563.8 468.6,551.6 C435.3,539.4 410.4,575.0 370.1,572.6 C329.8,570.3 250.8,543.4 226.9,537.5";
 
-const R = DATA.records;
+let R = DATA.records;
 const CMP = DATA.comparison;
 R.forEach((r, i) => { r.id = 'p' + i; });
 
@@ -464,8 +480,8 @@ function zvoTags(z) { return z.split(',').map(x=>x.trim()).map(x=>`<span class="
 function starHtml(id) { return `<button class="star-btn ${favs.has(id)?'on':''}" data-fav="${id}">${favs.has(id)?'★':'☆'}</button>`; }
 function bindStars(scope) { scope.querySelectorAll('.star-btn').forEach(b => { b.addEventListener('click', e => { e.stopPropagation(); toggleFav(b.dataset.fav); }); }); }
 
-const specs = [...new Set(R.map(r => r.spec))].sort((a,b) => a.localeCompare(b,'uk'));
-const cities = [...new Set(R.map(r => r.city))].sort((a,b) => a.localeCompare(b,'uk'));
+let specs = [...new Set(R.map(r => r.spec))].sort((a,b) => a.localeCompare(b,'uk'));
+let cities = [...new Set(R.map(r => r.city))].sort((a,b) => a.localeCompare(b,'uk'));
 let sortKey = 'count', sortDir = -1, homeCity = '';
 
 const tbody = document.getElementById('tbody'), searchEl = document.getElementById('search'), rc = document.getElementById('resultCount');
@@ -494,7 +510,7 @@ function render() {
     <td class="star-col">${starHtml(r.id)}</td><td class="spec-cell">${escapeHtml(r.spec)}</td><td><span class="city-pill">${escapeHtml(r.city)}</span></td>
     <td class="fac-cell">${escapeHtml(r.facShort)}<span class="vac">${escapeHtml(r.vacancy)}</span></td><td>${zvoTags(r.zvo)}</td>
     <td class="dist-col" style="text-align:center; display:${showDist?'':'none'}">${r._dist==null?'<span class="dist-pill">—</span>':r._dist===0?'<span class="dist-pill">тут</span>':`<span class="dist-pill">${r._dist} км</span>`}</td>
-    <td style="text-align:center"><span class="count-badge">${r.count}</span></td></tr>`).join('');
+    <td style="text-align:center"><span class="count-badge">${r.count}</span>${remPill(r)}</td></tr>`).join('');
   bindStars(tbody);
 }
 
@@ -558,6 +574,54 @@ function renderMap(){
 }
 if(mapSvg) mapSvg.setAttribute('viewBox', MAPGEO.viewBox); specs.forEach(s => mapSpec.add(new Option(s, s))); mapSpec.addEventListener('change', renderMap);
 
+// ====== ЖИВІ ДАНІ: каталог/статистика/залишки з аркуша "Бази" ======
+function remPill(r) {
+  if (!globalRemaining || !r.option || globalRemaining[r.option] === undefined) return '';
+  const k = globalRemaining[r.option];
+  return `<div class="rem-pill ${k <= 0 ? 'rem-0' : ''}">${k <= 0 ? 'зайнято' : 'вільно: ' + k}</div>`;
+}
+// Жива база + збагачення статичними полями (zvo/vacancy/facFull) за збігом spec+city+база
+function mergeLiveRecords(live) {
+  const emb = {};
+  DATA.records.forEach(r => { emb[r.spec + '|' + r.city + '|' + r.facShort] = r; });
+  return live.map((lr, i) => {
+    const e = emb[lr.spec + '|' + lr.city + '|' + lr.base] || {};
+    return { id: 'p' + i, spec: lr.spec, city: lr.city, facShort: lr.base, facFull: e.facFull || lr.base, edrpou: e.edrpou || '', vacancy: e.vacancy || '', zvo: e.zvo || '', count: lr.count, option: lr.option };
+  });
+}
+function buildStats() {
+  const total = R.reduce((s, r) => s + (r.count || 0), 0);
+  const uzh = R.filter(r => r.city === 'Ужгород').reduce((s, r) => s + r.count, 0);
+  const family = R.filter(r => /сімейна/i.test(r.spec)).reduce((s, r) => s + r.count, 0);
+  const facM = {}; R.forEach(r => facM[r.facShort] = (facM[r.facShort] || 0) + r.count);
+  const topFac = Object.entries(facM).sort((a, b) => b[1] - a[1])[0] || ['—', 0];
+  const ins = document.querySelectorAll('#stats .insight .ins-n');
+  const insL = document.querySelectorAll('#stats .insight .ins-l');
+  if (ins[0]) ins[0].textContent = (total ? Math.round(uzh / total * 100) : 0) + '%';
+  if (ins[1]) ins[1].textContent = family;
+  if (ins[2]) ins[2].textContent = topFac[1];
+  if (insL[2]) insL[2].textContent = 'місць — найбільший заклад';
+  if (ins[3]) ins[3].textContent = total;
+  if (insL[3]) insL[3].textContent = 'місць загалом';
+}
+function recomputeCatalog() {
+  specs = [...new Set(R.map(r => r.spec))].sort((a, b) => a.localeCompare(b, 'uk'));
+  cities = [...new Set(R.map(r => r.city))].sort((a, b) => a.localeCompare(b, 'uk'));
+  [fSpec, mapSpec].forEach(sel => { const cur = sel.value; sel.length = 1; specs.forEach(s => sel.add(new Option(s, s))); sel.value = cur; });
+  [fCity, fHome].forEach(sel => { const cur = sel.value; sel.length = 1; cities.forEach(c => sel.add(new Option(c, c))); sel.value = cur; });
+  barChart('chartSpec', agg('spec'), false, 'spec');
+  barChart('chartCity', agg('city'), true, 'city');
+  barChart('chartFac', (() => { const m = {}; R.forEach(r => m[r.facShort] = (m[r.facShort] || 0) + r.count); return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 10); })(), false);
+  const zb = {}; R.forEach(r => { const z = r.zvo || ''; const k = z.includes('Технології') ? 'Мед. діагностика' : (z.includes('Педіатрія') && z.includes('Медицина')) ? 'Медицина + Педіатрія' : (z || '—'); zb[k] = (zb[k] || 0) + r.count; });
+  donut('chartZvo', Object.entries(zb).sort((a, b) => b[1] - a[1]), palMoss);
+  const cov = {}; R.forEach(r => (cov[r.city] = cov[r.city] || new Set()).add(r.spec));
+  barChart('chartCoverage', Object.entries(cov).map(([c, s]) => [c, s.size]).sort((a, b) => b[1] - a[1]), true);
+  buildStats();
+  render();
+  if (document.getElementById('map').classList.contains('active')) renderMap();
+}
+buildStats();
+
 document.getElementById('cbNewSpec').innerHTML = `<div class="cb-head"><div class="cb-icon add">🆕</div><div><h3>Нові спеціальності</h3></div></div>` + CMP.newSpecs.map(s => `<div class="chg-item"><span class="chg-spec">${escapeHtml(s.name)}</span><span class="chg-badge add">+${s.places} місць</span></div>`).join('');
 document.getElementById('cbNewBase').innerHTML = `<div class="cb-head"><div class="cb-icon add">➕</div><div><h3>Нові бази</h3></div></div>` + CMP.newBases.map(b => `<div class="chg-item"><span class="chg-spec">${escapeHtml(b.spec)}</span><span>${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span><span class="chg-badge add">+${b.places}</span></div>`).join('');
 document.getElementById('cbRemBase').innerHTML = `<div class="cb-head"><div class="cb-icon rem">➖</div><div><h3>Вилучені бази</h3></div></div>` + CMP.removedBases.map(b => `<div class="chg-item"><span class="chg-spec">${escapeHtml(b.spec)}</span><span>${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span><span class="chg-badge rem">${b.places}</span></div>`).join('');
@@ -571,7 +635,10 @@ updateFavBadge(); render();
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkAMeybJpQ1RyvVd21wmZJJ8LWOAV4EGh2W6aPX9Q5AKnVfTuRVcg/exec";
 let globalForecastData = [];
 let globalBases = [];
+let globalRemaining = null;
+let globalUpdated = {};
 let fcFilters = { spec: '', city: '', base: '', prio: '' };
+let fcNameQuery = '';
 let globalChoicesMap = {}; 
 
 function switchTab(tabId) {
@@ -676,6 +743,7 @@ function loadUserChoices(pib) {
 document.getElementById('pibSelect').addEventListener('change', function() {
   loadUserChoices(this.value);
   updateDropdownLocks();
+  showLastUpdated(this.value);
 });
 
 // Функція СКАСУВАННЯ змін (повернення до стану бази)
@@ -700,14 +768,20 @@ async function fetchInitialData() {
     const response = await fetch(WEB_APP_URL);
     const data = await response.json();
     const pibSelect = document.getElementById('pibSelect');
+    pibSelect.length = 1;
     data.students.forEach(name => pibSelect.add(new Option(name, name)));
-    
-    prios.forEach(select => data.bases.forEach(base => select.add(new Option(base, base))));
+
+    prios.forEach(select => { select.length = 1; data.bases.forEach(base => select.add(new Option(base, base))); });
     
     globalForecastData = data.forecast;
+    globalChoicesMap = data.choices || {};
     globalBases = data.bases || [];
+    globalRemaining = data.remaining || null;
+    globalUpdated = data.updated || {};
+    applyDeadline(data.deadline, data.locked);
+    // Жива синхронізація каталогу/статистики/карти з аркуша "Бази"
+    if (data.records && data.records.length) { R = mergeLiveRecords(data.records); recomputeCatalog(); }
     populateForecastFilters();
-    globalChoicesMap = data.choices || {}; 
     
     document.getElementById('loaderUI').style.display = 'none';
     document.getElementById('formUI').style.display = 'block';
@@ -758,6 +832,7 @@ async function submitData() {
       localStorage.setItem('auth_pib', pib);
       localStorage.setItem('auth_pin', pin);
       document.getElementById('authNote').innerHTML = "✓ Дані збережено на цьому пристрої.";
+      if (result.updated) { globalUpdated[pib] = result.updated; showLastUpdated(pib); }
       fetchInitialData();
     } else { msg.textContent = "Помилка: " + (result.message || "Невірний ПІН"); msg.className = "status-msg error"; }
   } catch (e) { msg.textContent = "Помилка мережі."; msg.className = "status-msg error"; }
@@ -856,8 +931,9 @@ function loadLiveForecast() {
       if (resMatch && rb.spec) resultCell = '<span class="fc-result-hit">' + escapeHtml(rb.code) + ' | ' + fcHl(rb.spec, fcFilters.spec) + ' | ' + fcHl(rb.city, fcFilters.city) + ' | ' + fcHl(rb.base, fcFilters.base) + '</span>';
     }
     const openCls = active ? ' open' : '';
+    const nameHit = fcNameQuery && String(pib).toLowerCase().includes(fcNameQuery);
     html +=
-      `<tr class="fc-row${openCls}" data-row="${i}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
+      `<tr class="fc-row${openCls}${nameHit ? ' fc-namehit' : ''}" data-row="${i}" data-pib="${escapeHtml(pib)}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
       `<td style="font-weight:600;">${escapeHtml(pib)}</td>`+
       `<td><span class="status-badge ${badge}">${row[9]||"Не заповнено"}</span></td>`+
       `<td style="font-size:0.85rem;">${resultCell}</td></tr>`+
@@ -887,6 +963,58 @@ if (fcResetBtn) fcResetBtn.addEventListener('click', function() {
   ['fcSpec', 'fcCity', 'fcBase', 'fcPrio'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   loadLiveForecast();
 });
+
+// Пошук за ПІБ у живому розподілі — підсвітка + прокрутка до знайденого
+const fcNameEl = document.getElementById('fcName');
+if (fcNameEl) fcNameEl.addEventListener('input', function() {
+  fcNameQuery = this.value.trim().toLowerCase();
+  loadLiveForecast();
+  if (fcNameQuery) { const hit = document.querySelector('#forecastBody .fc-namehit'); if (hit) hit.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+});
+
+// Дедлайн / блокування подачі
+function applyDeadline(deadline, locked) {
+  const banner = document.getElementById('deadlineBanner');
+  const submitBtn = document.getElementById('submitBtn');
+  if (!banner) return;
+  if (locked) {
+    banner.style.display = 'block'; banner.className = 'deadline-banner locked';
+    banner.textContent = '⛔ Подача завершена' + (deadline ? ' (' + deadline + ')' : '') + '. Зміни більше не приймаються.';
+    if (submitBtn) submitBtn.disabled = true;
+  } else if (deadline) {
+    banner.style.display = 'block'; banner.className = 'deadline-banner';
+    banner.textContent = '⏳ Подача пріоритетів — до ' + deadline;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// Час останнього оновлення вибору обраного студента
+function showLastUpdated(pib) {
+  const el = document.getElementById('lastUpdated');
+  if (!el) return;
+  const ts = (pib && globalUpdated) ? globalUpdated[pib] : '';
+  el.textContent = ts ? ('🕓 Останнє оновлення: ' + ts) : '';
+}
+
+// Перемикач версії: авто / ПК / телефон (зберігається у localStorage)
+(function () {
+  const vt = document.getElementById('viewToggle');
+  if (!vt) return;
+  const modes = ['auto', 'pc', 'mobile'];
+  const icons = { auto: '🔄', pc: '🖥️', mobile: '📱' };
+  const titles = { auto: 'Версія: авто (за пристроєм)', pc: 'Версія: ПК', mobile: 'Версія: телефон' };
+  function apply(m) {
+    document.body.classList.remove('force-pc', 'force-mobile');
+    if (m === 'pc') document.body.classList.add('force-pc');
+    if (m === 'mobile') document.body.classList.add('force-mobile');
+    vt.textContent = icons[m]; vt.title = titles[m];
+    localStorage.setItem('view_mode', m);
+  }
+  let mode = localStorage.getItem('view_mode') || 'auto';
+  apply(mode);
+  vt.addEventListener('click', function () { mode = modes[(modes.indexOf(mode) + 1) % modes.length]; apply(mode); });
+})();
 
 // Розгортання/згортання рядка по кліку
 document.getElementById('forecastBody').addEventListener('click', function(e) {
