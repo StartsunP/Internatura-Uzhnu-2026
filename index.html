@@ -174,13 +174,15 @@
   .cd-code { font-weight: 700; color: var(--clay); flex-shrink: 0; font-variant-numeric: tabular-nums; }
   .cd-main { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
   .cd-tag { flex-shrink: 0; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 7px; white-space: nowrap; }
-  .cd-tag.rem { background: var(--clay-light); color: var(--clay); }
+  .cd-tag.rem { background: #ffe3b3; color: #9a5800; }
   .cd-tag.taken { background: var(--moss-light); color: var(--moss-dark); }
-  .cd-tag.full { background: var(--red-light); color: var(--red); }
+  .cd-tag.full { background: #f6c9c2; color: #bf2419; }
   .cd-empty { padding: 16px; text-align: center; color: var(--muted); font-size: 0.85rem; }
-  [data-theme="dark"] .cd-tag.rem { background: rgba(193,99,58,0.25); color: #e8a07a; }
+  .view-toggle { font-size: 0.78rem; font-weight: 600; border: 1.5px solid var(--line); border-radius: 9px; padding: 6px 11px; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; flex-shrink: 0; margin-left: auto; font-family: inherit; }
+  .view-toggle:hover { color: var(--ink); border-color: var(--moss); }
+  [data-theme="dark"] .cd-tag.rem { background: rgba(230,170,70,0.25); color: #ecc270; }
   [data-theme="dark"] .cd-tag.taken { background: rgba(79,157,119,0.22); color: #7bb494; }
-  [data-theme="dark"] .cd-tag.full { background: rgba(224,122,104,0.22); color: #e8a095; }
+  [data-theme="dark"] .cd-tag.full { background: rgba(230,70,55,0.32); color: #f5897a; }
   [data-theme="dark"] .cd-opt.sel { background: rgba(79,157,119,0.18); }
   /* Компактні пріоритети + нерухоме меню пошуку на телефоні */
   @media (max-width: 600px) {
@@ -298,7 +300,7 @@
     <button class="tab-btn" data-tab="stats">Статистика</button>
     <button class="tab-btn" data-tab="changes">Що змінилось</button>
     <button class="tab-btn fav-tab" data-tab="favs">★ Мій список <span class="fav-badge" id="favBadge">0</span></button>
-    <button class="theme-toggle" id="viewToggle" title="Версія: авто / ПК / телефон">🖥️</button>
+    <button class="view-toggle" id="viewToggle">🔄 Авто</button>
     <button class="theme-toggle" id="themeToggle" title="Світла / темна тема">🌙</button>
   </div>
 </nav>
@@ -1054,8 +1056,8 @@ function showLastUpdated(pib) {
   const vt = document.getElementById('viewToggle');
   if (!vt) return;
   const modes = ['auto', 'pc', 'mobile'];
-  const icons = { auto: '🔄', pc: '🖥️', mobile: '📱' };
-  const titles = { auto: 'Версія: авто (за пристроєм)', pc: 'Версія: ПК', mobile: 'Версія: телефон' };
+  const icons = { auto: '🔄 Авто', pc: '🖥 ПК', mobile: '📱 Телефон' };
+  const titles = { auto: 'Вигляд сторінки: Авто (за пристроєм). Натисніть → ПК', pc: 'Вигляд сторінки: ПК. Натисніть → Телефон', mobile: 'Вигляд сторінки: Телефон. Натисніть → Авто' };
   function apply(m) {
     document.body.classList.remove('force-pc', 'force-mobile');
     if (m === 'pc') document.body.classList.add('force-pc');
