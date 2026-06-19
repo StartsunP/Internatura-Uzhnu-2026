@@ -732,7 +732,7 @@ function updateDropdownLocks() {
         opt.text = base + '  ✓ обране';
         opt.style.color = 'var(--moss-dark)';
         opt.style.backgroundColor = 'var(--moss-light)';
-      } else if (remaining <= 0 && isFinite(myRank)) {
+      } else if (remaining <= 0) {
         opt.disabled = true;
         opt.text = base + '  🔴 місць немає';
         opt.style.color = 'var(--red)';
@@ -941,6 +941,7 @@ function loadLiveForecast() {
     const pib = row[1] || "—";
     const matched = active ? fcMatchedSlots(pib) : [];
     if (active && matched.length === 0) continue;
+    if (fcNameQuery && !String(pib).toLowerCase().includes(fcNameQuery)) continue;
     shown++;
     let badge = "status-gray";
     if ((row[9]||"").toLowerCase().includes("проходить")) badge = "status-green";
@@ -952,7 +953,7 @@ function loadLiveForecast() {
       if (resMatch && rb.spec) resultCell = '<span class="fc-result-hit">' + escapeHtml(rb.code) + ' | ' + fcHl(rb.spec, fcFilters.spec) + ' | ' + fcHl(rb.city, fcFilters.city) + ' | ' + fcHl(rb.base, fcFilters.base) + '</span>';
     }
     const openCls = active ? ' open' : '';
-    const nameHit = fcNameQuery && String(pib).toLowerCase().includes(fcNameQuery);
+    const nameHit = false; // пошук за ПІБ тепер фільтрує, а не підсвічує
     html +=
       `<tr class="fc-row${openCls}${nameHit ? ' fc-namehit' : ''}" data-row="${i}" data-pib="${escapeHtml(pib)}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
       `<td style="font-weight:600;">${escapeHtml(pib)}${(globalUpdated && globalUpdated[pib]) ? `<span class="fc-upd">↻ ${escapeHtml(String(globalUpdated[pib]).slice(0, 16))}</span>` : ''}</td>`+
@@ -960,10 +961,10 @@ function loadLiveForecast() {
       `<td style="font-size:0.85rem;">${resultCell}</td></tr>`+
       `<tr class="fc-detail${openCls}" data-detail="${i}"><td colspan="4"><div class="fc-detail-inner"><div class="fc-detail-title">Пріоритети студента</div>${buildPrioHtml(pib, matched)}</div></td></tr>`;
   }
-  if (active && shown === 0) html = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--muted);">За вибраними фільтрами нікого не знайдено.</td></tr>';
+  if ((active || fcNameQuery) && shown === 0) html = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--muted);">Нікого не знайдено за вибраними умовами.</td></tr>';
   tbody.innerHTML = html;
   const cnt = document.getElementById('fcCount');
-  if (cnt) cnt.textContent = active ? ('Знайдено: ' + shown) : '';
+  if (cnt) cnt.textContent = (active || fcNameQuery) ? ('Знайдено: ' + shown) : '';
 }
 
 // Застосування фільтрів — ЛИШЕ по кнопці "Шукати"
@@ -990,7 +991,6 @@ const fcNameEl = document.getElementById('fcName');
 if (fcNameEl) fcNameEl.addEventListener('input', function() {
   fcNameQuery = this.value.trim().toLowerCase();
   loadLiveForecast();
-  if (fcNameQuery) { const hit = document.querySelector('#forecastBody .fc-namehit'); if (hit) hit.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 });
 
 // Дедлайн / блокування подачі
