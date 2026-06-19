@@ -203,6 +203,24 @@
   .thanks-text b { font-size: 0.9rem; color: var(--ink); }
   .thanks-text small { font-size: 0.78rem; color: var(--muted); }
   .thanks-close { position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: var(--ink); color: var(--card); font-size: 0.78rem; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+
+  /* --- Інструкція / онбординг --- */
+  .help-btn { border: 0; background: transparent; font-size: 1.05rem; cursor: pointer; padding: 8px 10px; border-radius: 9px; flex-shrink: 0; line-height: 1; }
+  .help-btn:hover { background: var(--hover); }
+  .guide-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 210; padding: 18px; }
+  .guide-overlay.show { display: flex; }
+  .guide-modal { background: var(--card); border-radius: 22px; max-width: 440px; width: 100%; padding: 26px 24px 22px; position: relative; box-shadow: 0 18px 50px rgba(0,0,0,0.45); max-height: 92vh; overflow-y: auto; animation: thanksIn 0.45s cubic-bezier(0.2,0.9,0.3,1.3); }
+  .guide-head { text-align: center; margin-bottom: 18px; }
+  .guide-emoji { font-size: 2.6rem; line-height: 1; }
+  .guide-head h3 { font-size: 1.3rem; font-weight: 800; margin: 6px 0 2px; color: var(--ink); }
+  .guide-head p { font-size: 0.85rem; color: var(--muted); }
+  .guide-step { display: flex; gap: 13px; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .guide-step:last-of-type { border-bottom: 0; }
+  .gs-ic { font-size: 1.5rem; flex-shrink: 0; width: 40px; height: 40px; border-radius: 11px; background: var(--moss-light); display: flex; align-items: center; justify-content: center; }
+  .guide-step b { display: block; color: var(--ink); font-size: 0.94rem; margin-bottom: 2px; }
+  .guide-step span { display: block; color: var(--muted); font-size: 0.83rem; line-height: 1.4; }
+  .guide-ok { width: 100%; margin-top: 18px; background: var(--moss); color: #fff; border: 0; border-radius: 12px; padding: 13px; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
+  .guide-ok:hover { filter: brightness(1.07); }
   /* Кастомний випадаючий список баз (Мій вибір) */
   .cd { position: relative; margin-bottom: 16px; max-width: 760px; }
   .cd-trigger { width: 100%; text-align: left; border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 36px 12px 14px; font-size: 0.92rem; font-family: inherit; background: var(--paper); color: var(--ink); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -217,6 +235,9 @@
   .cd-opt:hover { background: var(--hover); }
   .cd-opt.sel { background: var(--moss-light); }
   .cd-opt.disabled { opacity: 0.7; cursor: not-allowed; }
+  .cd-special { background: var(--track); }
+  .cd-special-ic { flex-shrink: 0; font-size: 1.1rem; width: 22px; text-align: center; }
+  .cd-special b { color: var(--ink); }
   .cd-code { font-weight: 700; color: var(--clay); flex-shrink: 0; font-variant-numeric: tabular-nums; }
   .cd-main { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
   .cd-loc { display: inline; }
@@ -276,7 +297,28 @@
   .bar-track { flex: 1; background: var(--track); border-radius: 6px; height: 22px; position: relative; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--moss), #4a8f6d); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: #fff; font-weight: 700; font-size: 0.76rem; width: 0; transition: width 0.9s cubic-bezier(.16,1,.3,1); }
   .bar-row.alt .bar-fill { background: linear-gradient(90deg, var(--clay), #d6824f); }
+  .donut-total { fill: var(--ink); }
+  .donut-sub { fill: var(--muted); }
   .donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  /* успішний вхід — читабельно в обох темах */
+  .auth-ok-msg { color: var(--moss-dark); font-weight: 700; }
+  [data-theme="dark"] .auth-ok-msg { color: #8fd0ab; }
+  /* KPI-картки живої статистики */
+  .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 11px; margin-bottom: 22px; }
+  @media (min-width: 620px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 920px) { .kpi-grid { grid-template-columns: repeat(5, 1fr); } }
+  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 13px; padding: 13px 14px; box-shadow: var(--shadow); }
+  .kpi-n { font-size: 1.5rem; font-weight: 800; line-height: 1; color: var(--ink); }
+  .kpi-l { font-size: 0.74rem; color: var(--muted); margin-top: 6px; font-weight: 600; line-height: 1.25; }
+  .kpi.ok { border-color: var(--moss); } .kpi.ok .kpi-n { color: var(--moss); }
+  .kpi.warn { border-color: var(--clay); } .kpi.warn .kpi-n { color: var(--clay); }
+  [data-theme="dark"] .kpi.ok .kpi-n { color: #8fd0ab; }
+  /* Перемикач набору даних + фільтр міста */
+  .stats-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 18px; }
+  .seg { display: inline-flex; background: var(--track); border-radius: 11px; padding: 3px; gap: 2px; }
+  .seg-btn { border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 0.84rem; padding: 8px 14px; border-radius: 9px; cursor: pointer; }
+  .seg-btn.active { background: var(--card); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+  .stat-city { padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); font-size: 0.85rem; font-weight: 600; }
   .legend-item { display: flex; align-items: center; gap: 9px; font-size: 0.84rem; margin-bottom: 7px; }
   .legend-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
   .legend-item .lv { margin-left: auto; font-weight: 700; color: var(--muted); }
@@ -363,6 +405,7 @@
 
     <button class="tab-btn fav-tab" data-tab="favs">★ Мій список <span class="fav-badge" id="favBadge">0</span></button>
     <button class="view-toggle" id="viewToggle">🔄 Авто</button>
+    <button class="help-btn" id="guideBtn" title="Як користуватися сайтом" aria-label="Інструкція">❔</button>
     <button class="theme-toggle" id="themeToggle" title="Світла / темна тема">🌙</button>
   </div>
 </nav>
@@ -400,7 +443,7 @@
           </div>
 
           <div id="authPinReveal" class="pin-reveal" style="display:none;"></div>
-          <div class="auth-note" id="authOk" style="display:none; color:var(--moss-dark);"></div>
+          <div class="auth-note auth-ok-msg" id="authOk" style="display:none;"></div>
         </div>
         <span class="last-updated" id="lastUpdated"></span>
 
@@ -505,21 +548,31 @@
   </section>
 
   <section class="panel" id="stats">
-    <h2 class="section-title">Статистика місць</h2>
-    <div class="insight-strip">
-      <div class="insight"><div class="ins-n">47%</div><div class="ins-l">місць — в Ужгороді</div></div>
-      <div class="insight"><div class="ins-n">29</div><div class="ins-l">місць у сімейній медицині</div></div>
-      <div class="insight"><div class="ins-n">24</div><div class="ins-l">місця в УМБКЛ</div></div>
-      <div class="insight"><div class="ins-n">+4</div><div class="ins-l">нові спеціальності</div></div>
+    <h2 class="section-title">Статистика та аналітика</h2>
+    <p class="section-sub">Живі дані: вступники, фінансування, заповнення вибору та попередній розподіл оновлюються в реальному часі.</p>
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="stats-controls">
+      <div class="seg" id="statMode">
+        <button class="seg-btn active" type="button" data-mode="supply">Пропозиція (місця)</button>
+        <button class="seg-btn" type="button" data-mode="demand">Попит (вибори студентів)</button>
+      </div>
+      <select id="statCity" class="stat-city"><option value="">Усі міста</option></select>
     </div>
+
     <div class="chart-grid two">
-      <div class="chart-card"><h3>За спеціальностями</h3><div id="chartSpec"></div></div>
-      <div class="chart-card"><h3>За містами</h3><div id="chartCity"></div></div>
+      <div class="chart-card"><h3 id="hSpec">За спеціальностями</h3><div id="chartSpec"></div></div>
+      <div class="chart-card"><h3 id="hCity">За містами</h3><div id="chartCity"></div></div>
     </div>
-    <div class="chart-grid" style="margin-top:20px"><div class="chart-card"><h3>Найбільші заклади</h3><div id="chartFac"></div></div></div>
     <div class="chart-grid two" style="margin-top:20px">
+      <div class="chart-card"><h3>Статус попереднього розподілу</h3><div class="ch-sub">За поточними заявками та рейтингом</div><div id="chartStatus" class="donut-wrap"></div></div>
       <div class="chart-card"><h3>Доступність за освітою</h3><div id="chartZvo" class="donut-wrap"></div></div>
+    </div>
+    <div class="chart-grid" style="margin-top:20px"><div class="chart-card"><h3 id="hFac">Найбільші заклади</h3><div id="chartFac"></div></div></div>
+    <div class="chart-grid two" style="margin-top:20px">
       <div class="chart-card"><h3>Спеціальності за містами</h3><div id="chartCoverage"></div></div>
+      <div class="chart-card"><h3>Найзаповненіші бази</h3><div class="ch-sub">Скільки місць уже зайнято за попереднім розподілом</div><div id="chartFill"></div></div>
     </div>
   </section>
 
@@ -572,6 +625,27 @@
   <button class="thanks-close" type="button" onclick="event.stopPropagation(); closeThanksBadge()" aria-label="Сховати">✕</button>
   <span class="thanks-cat">🐈</span>
   <span class="thanks-text"><b>Сподобався сайт?</b><small>Підтримай автора ☕</small></span>
+</div>
+
+<!-- Інструкція / онбординг -->
+<div class="guide-overlay" id="guideOverlay">
+  <div class="guide-modal">
+    <button class="donate-x" type="button" onclick="closeGuide()" aria-label="Закрити">✕</button>
+    <div class="guide-head">
+      <div class="guide-emoji">🧭</div>
+      <h3>Як користуватися сайтом</h3>
+      <p>Коротко — займе хвилину</p>
+    </div>
+    <div class="guide-steps">
+      <div class="guide-step"><div class="gs-ic">🔑</div><div><b>1. Вхід</b><span>Оберіть своє ПІБ зі списку. При першому вході система видасть персональний ПІН-код — збережіть його, щоб заходити й редагувати вибір з будь-якого пристрою.</span></div></div>
+      <div class="guide-step"><div class="gs-ic">🎯</div><div><b>2. Пріоритети</b><span>Розставте до 5 баз у порядку бажаності. Поряд видно, скільки місць залишилось (🟧), що вже зайнято (🔴) чи обрано (✅). Є варіанти «🌍 За межами Закарпаття» та «🚫 Не обрано».</span></div></div>
+      <div class="guide-step"><div class="gs-ic">💾</div><div><b>3. Збереження</b><span>Натисніть «Зберегти мій вибір». Змінювати можна будь-коли до дедлайну.</span></div></div>
+      <div class="guide-step"><div class="gs-ic">⚡</div><div><b>4. Живий розподіл</b><span>Дивіться попередній результат розподілу за рейтингом — у реальному часі. Можна шукати себе за ПІБ.</span></div></div>
+      <div class="guide-step"><div class="gs-ic">🗺️</div><div><b>5. Карта і статистика</b><span>Де які місця, скільки залишилось, попит проти пропозиції — на вкладках «Карта» та «Статистика».</span></div></div>
+      <div class="guide-step"><div class="gs-ic">✉️</div><div><b>Питання?</b><span>Унизу сторінки — контакт адміністратора. Цю інструкцію можна відкрити знову кнопкою «❔» вгорі.</span></div></div>
+    </div>
+    <button class="guide-ok" type="button" onclick="closeGuide()">Зрозуміло, почати →</button>
+  </div>
 </div>
 
 <script>
@@ -688,16 +762,89 @@ function barChart(elId, entries, alt, clickKey){
   const max = Math.max(...entries.map(e=>e[1]));
   document.getElementById(elId).innerHTML = entries.map(([label,val]) => `<div class="bar-row ${alt?'alt':''}" ${clickKey?`data-jump="${escapeHtml(label)}" data-key="${clickKey}"`:''} style="cursor:${clickKey?'pointer':'default'}"><div class="bar-label">${escapeHtml(label)}</div><div class="bar-track"><div class="bar-fill" data-w="${(val/max*100).toFixed(1)}">${val}</div></div></div>`).join('');
 }
-barChart('chartSpec', agg('spec'), false, 'spec'); barChart('chartCity', agg('city'), true, 'city');
-const facAgg = (()=>{ const m={}; R.forEach(r=>m[r.facShort]=(m[r.facShort]||0)+r.count); return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,10); })();
-barChart('chartFac', facAgg, false);
 function animateBars(){ document.querySelectorAll('.bar-fill').forEach(f => f.style.width = f.dataset.w + '%'); }
 
-function donut(elId, entries, colors){
+// --- Інтерактивна статистика: перемикач Пропозиція/Попит + фільтр міста ---
+let statMode = 'supply';
+function statDataset() {
+  if (statMode === 'demand') {
+    const arr = [];
+    for (const pib in globalChoicesMap) (globalChoicesMap[pib] || []).forEach(v => {
+      if (!v || String(v).trim() === '' || String(v).trim() === OUTSIDE) return;
+      const b = parseBase(v); arr.push({ spec: b.spec, city: b.city, facShort: b.base, count: 1 });
+    });
+    return arr;
+  }
+  return R.map(r => ({ spec: r.spec, city: r.city, facShort: r.facShort, count: r.count }));
+}
+function aggOf(arr, key) { const m = {}; arr.forEach(r => { if (r[key]) m[r[key]] = (m[r[key]] || 0) + r.count; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); }
+function renderStatCharts() {
+  const cityEl = document.getElementById('statCity'); const city = cityEl ? cityEl.value : '';
+  const ds = statDataset();
+  const dsCity = city ? ds.filter(r => r.city === city) : ds;
+  const demand = statMode === 'demand';
+  barChart('chartSpec', aggOf(dsCity, 'spec'), false, demand ? null : 'spec');
+  barChart('chartCity', aggOf(ds, 'city'), true, demand ? null : 'city');
+  barChart('chartFac', aggOf(dsCity, 'facShort').slice(0, 10), false);
+  const hS = document.getElementById('hSpec'), hC = document.getElementById('hCity'), hF = document.getElementById('hFac');
+  if (hS) hS.textContent = (demand ? 'Попит за спеціальностями' : 'Місця за спеціальностями') + (city ? ' · ' + city : '');
+  if (hC) hC.textContent = demand ? 'Попит за містами' : 'Місця за містами';
+  if (hF) hF.textContent = (demand ? 'Заклади за вибором' : 'Найбільші заклади') + (city ? ' · ' + city : '');
+  animateBars();
+}
+// --- Живі KPI + статус-діаграма + заповненість баз ---
+function buildLiveStats() {
+  const s = globalStats || {};
+  let filled = 0, passing = 0, risk = 0, outside = 0, notfilled = 0;
+  if (globalForecastData && globalForecastData.length > 1) for (let i = 1; i < globalForecastData.length; i++) {
+    const st = String(globalForecastData[i][9] || ''), res = globalForecastData[i][8];
+    if (res === OUTSIDE || st === 'За межами Закарпаття') { outside++; filled++; }
+    else if (st === 'Не заповнено') notfilled++;
+    else { filled++; if (st.toLowerCase().includes('ризик')) risk++; else if (st.toLowerCase().includes('проходить')) passing++; }
+  }
+  const totalCap = R.reduce((a, r) => a + (r.count || 0), 0);
+  let remSum = 0; if (globalRemaining) for (const k in globalRemaining) remSum += Math.max(0, globalRemaining[k]);
+  const taken = totalCap - remSum;
+  const cards = [
+    ['Допущено до розподілу', s.admitted != null ? s.admitted : '—', ''],
+    ['На бюджеті', s.budget != null ? s.budget : '—', ''],
+    ['На контракті', s.contract != null ? s.contract : '—', ''],
+    ['Відмовились', s.refused != null ? s.refused : '—', ''],
+    ['Заповнили вибір', filled, ''],
+    ['Попередньо проходять', passing, 'ok'],
+    ['Під ризиком', risk, 'warn'],
+    ['За межами Закарпаття', outside, ''],
+    ['Зайнято / усього місць', taken + ' / ' + totalCap, ''],
+    ['Вільних місць', remSum, ''],
+  ];
+  const kg = document.getElementById('kpiGrid');
+  if (kg) kg.innerHTML = cards.map(([l, v, c]) => `<div class="kpi ${c}"><div class="kpi-n">${v}</div><div class="kpi-l">${l}</div></div>`).join('');
+  const stEntries = [['Проходять', passing], ['Під ризиком', risk], ['За межами', outside], ['Не заповнили', notfilled]].filter(e => e[1] > 0);
+  const stEl = document.getElementById('chartStatus');
+  if (stEl) { if (stEntries.length) donut('chartStatus', stEntries, ['#4a8f6d', '#c1633a', '#b8893f', '#9aa6a0'], 'студентів'); else stEl.innerHTML = '<div class="md-empty">Поки немає заявок.</div>'; }
+  const fill = R.map(r => { const rem = (globalRemaining && globalRemaining[r.option] !== undefined) ? Math.max(0, globalRemaining[r.option]) : r.count; return [r.spec + ' · ' + r.city, r.count - rem]; }).filter(e => e[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const fillEl = document.getElementById('chartFill');
+  if (fillEl) { if (fill.length) barChart('chartFill', fill, true); else fillEl.innerHTML = '<div class="md-empty">Поки ніхто не зайняв місць.</div>'; }
+  animateBars();
+}
+// Взаємодія: перемикач набору даних + фільтр міста
+(function () {
+  const seg = document.getElementById('statMode');
+  if (seg) seg.addEventListener('click', function (e) {
+    const b = e.target.closest('.seg-btn'); if (!b) return;
+    seg.querySelectorAll('.seg-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); statMode = b.dataset.mode; renderStatCharts();
+  });
+  const sc = document.getElementById('statCity');
+  if (sc) sc.addEventListener('change', renderStatCharts);
+})();
+renderStatCharts();
+
+function donut(elId, entries, colors, donutLabel){
   const total = entries.reduce((s,e)=>s+e[1],0); let acc = 0; const R_=52, C_=2*Math.PI*R_;
   const segs = entries.map(([label,val],i) => { const frac = val/total, len = frac*C_, off = acc*C_; acc += frac; return `<circle r="${R_}" cx="70" cy="70" fill="none" stroke="${colors[i%colors.length]}" stroke-width="22" stroke-dasharray="${len.toFixed(2)} ${(C_-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 70 70)"/>`; }).join('');
   const legend = entries.map(([label,val],i) => `<div class="legend-item"><span class="legend-dot" style="background:${colors[i%colors.length]}"></span>${escapeHtml(label)}<span class="lv">${val}</span></div>`).join('');
-  document.getElementById(elId).innerHTML = `<svg class="donut" width="140" height="140" viewBox="0 0 140 140">${segs}<text x="70" y="66" text-anchor="middle" font-size="26" font-weight="800" fill="#16261d">${total}</text><text x="70" y="86" text-anchor="middle" font-size="11" fill="#6b7a70">місць</text></svg><div class="legend">${legend}</div>`;
+  document.getElementById(elId).innerHTML = `<svg class="donut" width="140" height="140" viewBox="0 0 140 140">${segs}<text class="donut-total" x="70" y="66" text-anchor="middle" font-size="26" font-weight="800">${total}</text><text class="donut-sub" x="70" y="86" text-anchor="middle" font-size="11">${donutLabel || 'місць'}</text></svg><div class="legend">${legend}</div>`;
 }
 const palMoss = ['#2f6b4f','#4a8f6d','#7bb494','#b8893f','#c1633a'];
 const zvoBuckets = {}; R.forEach(r => { let k = r.zvo.includes('Технології')?'Мед. діагностика':r.zvo.includes('Педіатрія')&&r.zvo.includes('Медицина')?'Медицина + Педіатрія':r.zvo; zvoBuckets[k] = (zvoBuckets[k]||0) + r.count; });
@@ -736,34 +883,19 @@ function mergeLiveRecords(live) {
     return { id: 'p' + i, spec: lr.spec, city: lr.city, facShort: lr.base, facFull: e.facFull || lr.base, edrpou: e.edrpou || '', vacancy: e.vacancy || '', zvo: e.zvo || '', count: lr.count, option: lr.option };
   });
 }
-function buildStats() {
-  const total = R.reduce((s, r) => s + (r.count || 0), 0);
-  const uzh = R.filter(r => r.city === 'Ужгород').reduce((s, r) => s + r.count, 0);
-  const family = R.filter(r => /сімейна/i.test(r.spec)).reduce((s, r) => s + r.count, 0);
-  const facM = {}; R.forEach(r => facM[r.facShort] = (facM[r.facShort] || 0) + r.count);
-  const topFac = Object.entries(facM).sort((a, b) => b[1] - a[1])[0] || ['—', 0];
-  const ins = document.querySelectorAll('#stats .insight .ins-n');
-  const insL = document.querySelectorAll('#stats .insight .ins-l');
-  if (ins[0]) ins[0].textContent = (total ? Math.round(uzh / total * 100) : 0) + '%';
-  if (ins[1]) ins[1].textContent = family;
-  if (ins[2]) ins[2].textContent = topFac[1];
-  if (insL[2]) insL[2].textContent = 'місць — найбільший заклад';
-  if (ins[3]) ins[3].textContent = total;
-  if (insL[3]) insL[3].textContent = 'місць загалом';
-}
+function buildStats() { buildLiveStats(); }
 function recomputeCatalog() {
   specs = [...new Set(R.map(r => r.spec))].sort((a, b) => a.localeCompare(b, 'uk'));
   cities = [...new Set(R.map(r => r.city))].sort((a, b) => a.localeCompare(b, 'uk'));
   [fSpec, mapSpec].forEach(sel => { const cur = sel.value; sel.length = 1; specs.forEach(s => sel.add(new Option(s, s))); sel.value = cur; });
   [fCity, fHome].forEach(sel => { const cur = sel.value; sel.length = 1; cities.forEach(c => sel.add(new Option(c, c))); sel.value = cur; });
-  barChart('chartSpec', agg('spec'), false, 'spec');
-  barChart('chartCity', agg('city'), true, 'city');
-  barChart('chartFac', (() => { const m = {}; R.forEach(r => m[r.facShort] = (m[r.facShort] || 0) + r.count); return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 10); })(), false);
+  const sc = document.getElementById('statCity'); if (sc) { const cur = sc.value; sc.length = 1; cities.forEach(c => sc.add(new Option(c, c))); sc.value = cur; }
+  renderStatCharts();
   const zb = {}; R.forEach(r => { const z = r.zvo || ''; const k = z.includes('Технології') ? 'Мед. діагностика' : (z.includes('Педіатрія') && z.includes('Медицина')) ? 'Медицина + Педіатрія' : (z || '—'); zb[k] = (zb[k] || 0) + r.count; });
   donut('chartZvo', Object.entries(zb).sort((a, b) => b[1] - a[1]), palMoss);
   const cov = {}; R.forEach(r => (cov[r.city] = cov[r.city] || new Set()).add(r.spec));
   barChart('chartCoverage', Object.entries(cov).map(([c, s]) => [c, s.size]).sort((a, b) => b[1] - a[1]), true);
-  buildStats();
+  buildLiveStats();
   render();
   if (document.getElementById('map').classList.contains('active')) renderMap();
 }
@@ -778,6 +910,8 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkA
 
 // --- Авторизація (самореєстрація з видачею ПІНу) ---
 let authedPib = null, authedPin = null, deadlineLocked = false;
+const OUTSIDE = 'За межами Закарпаття'; // спец-варіант пріоритету (синхронізовано з бекендом)
+let globalStats = null; // реальна статистика з аркуша "Рейтинг"
 // POST до Apps Script БЕЗ кастомних заголовків (text/plain) — щоб не було CORS-preflight
 function apiPost(obj) { return fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(obj) }).then(r => r.json()); }
 function setAuthed(pib, pin) {
@@ -923,7 +1057,7 @@ function updateDropdownLocks() {
   const chosen = prios.map(s => s.value).filter(v => v !== "");
   prios.forEach(sel => {
     Array.from(sel.options).forEach(opt => {
-      if (!opt.value) return; // плейсхолдер "Оберіть базу..."
+      if (!opt.value || opt.value === OUTSIDE) return; // плейсхолдер / спец-варіант
       const base = opt.value;
       const cap = parseCap(base);
       const remaining = Math.max(0, cap - (placed[base] || 0));
@@ -998,7 +1132,7 @@ async function fetchInitialData() {
     pibSelect.length = 1;
     data.students.forEach(name => pibSelect.add(new Option(name, name)));
 
-    prios.forEach(select => { select.length = 1; data.bases.forEach(base => select.add(new Option(base, base))); });
+    prios.forEach(select => { select.length = 1; data.bases.forEach(base => select.add(new Option(base, base))); select.add(new Option(OUTSIDE, OUTSIDE)); });
     cdInit();
     
     globalForecastData = data.forecast;
@@ -1006,6 +1140,7 @@ async function fetchInitialData() {
     globalBases = data.bases || [];
     globalRemaining = data.remaining || null;
     globalUpdated = data.updated || {};
+    globalStats = data.stats || null;
     applyDeadline(data.deadline, data.locked);
     // Жива синхронізація каталогу/статистики/карти з аркуша "Бази"
     if (data.records && data.records.length) { R = mergeLiveRecords(data.records); recomputeCatalog(); }
@@ -1115,6 +1250,10 @@ function buildPrioHtml(pib, matched) {
   const items = [];
   raw.forEach((v, idx) => {
     if (!v || !String(v).trim()) return;
+    if (String(v).trim() === OUTSIDE) {
+      items.push(`<div class="fc-prio"><span class="fc-prio-n">${idx + 1}</span><span class="fc-prio-code">🌍</span><span class="fc-prio-txt"><b>За межами Закарпаття</b></span></div>`);
+      return;
+    }
     const b = parseBase(v);
     const hit = matched && matched.indexOf(idx) !== -1; // збіг лише якщо відповідає ВСІМ активним фільтрам разом
     // Підсвічуємо токени тільки в рядку, що збігся повністю — інакше звичайний текст
@@ -1142,8 +1281,8 @@ function loadLiveForecast() {
     let badge = "status-gray";
     if ((row[9]||"").toLowerCase().includes("проходить")) badge = "status-green";
     if ((row[9]||"").toLowerCase().includes("ризик") || (row[9]||"").toLowerCase().includes("резерв")) badge = "status-red";
-    let resultCell = escapeHtml(row[8] || "—");
-    if (active && row[8]) {
+    let resultCell = (row[8] === OUTSIDE) ? '🌍 За межами Закарпаття' : escapeHtml(row[8] || "—");
+    if (active && row[8] && row[8] !== OUTSIDE) {
       const rb = parseBase(row[8]);
       const resMatch = (!fcFilters.spec || rb.spec === fcFilters.spec) && (!fcFilters.city || rb.city === fcFilters.city) && (!fcFilters.base || rb.base === fcFilters.base);
       if (resMatch && rb.spec) resultCell = '<span class="fc-result-hit">' + escapeHtml(rb.code) + ' | ' + fcHl(rb.spec, fcFilters.spec) + ' | ' + fcHl(rb.city, fcFilters.city) + ' | ' + fcHl(rb.base, fcFilters.base) + '</span>';
@@ -1253,9 +1392,16 @@ function cdRenderList(w, q) {
   const placed = placedAboveMe();
   const chosen = prios.map(s => s.value).filter(Boolean);
   let html = '';
+  if (!q) {
+    // спец-опції зверху: очистити пріоритет + база за межами Закарпаття
+    const isClear = !sel.value;
+    html += `<div class="cd-opt cd-special${isClear ? ' sel' : ''}" data-val=""><span class="cd-special-ic">🚫</span><span class="cd-main"><b>Не обрано</b><span class="cd-loc"> · залишити пріоритет порожнім</span></span></div>`;
+    const isOut = sel.value === OUTSIDE;
+    html += `<div class="cd-opt cd-special${isOut ? ' sel' : ''}" data-val="${OUTSIDE}"><span class="cd-special-ic">🌍</span><span class="cd-main"><b>За межами Закарпаття</b><span class="cd-loc"> · оберу базу в іншій області</span></span></div>`;
+  }
   Array.from(sel.options).forEach(opt => {
     const base = opt.value;
-    if (!base) return;
+    if (!base || base === OUTSIDE) return;
     if (q && base.toLowerCase().indexOf(q) === -1) return;
     const b = parseBase(base), cap = parseCap(base);
     const remaining = Math.max(0, cap - (placed[base] || 0));
@@ -1377,6 +1523,21 @@ function closeThanksBadge() {
 (function () {
   [5, 10, 15, 20, 30].forEach(m => setTimeout(showThanksBadge, m * 60 * 1000));
   setTimeout(() => setInterval(showThanksBadge, 30 * 60 * 1000), 30 * 60 * 1000);
+})();
+
+// ==========================================
+// БЛОК 5: ІНСТРУКЦІЯ (онбординг)
+// ==========================================
+function openGuide() { const o = document.getElementById('guideOverlay'); if (o) o.classList.add('show'); }
+function closeGuide() { const o = document.getElementById('guideOverlay'); if (o) o.classList.remove('show'); localStorage.setItem('seen_guide', '1'); }
+(function () {
+  const btn = document.getElementById('guideBtn');
+  if (btn) btn.addEventListener('click', openGuide);
+  const o = document.getElementById('guideOverlay');
+  if (o) o.addEventListener('click', function (e) { if (e.target === o) closeGuide(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeGuide(); });
+  // автопоказ лише раз — при першому вході з пристрою
+  if (!localStorage.getItem('seen_guide')) setTimeout(openGuide, 800);
 })();
 </script>
 </body>
