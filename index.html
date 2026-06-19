@@ -493,7 +493,6 @@ MAPGEO.tisa = "M802.7,623.4 C781.5,633.2 714.0,678.6 675.3,682.4 C636.5,686.2 60
 let R = DATA.records;
 let globalRemaining = null;
 let globalUpdated = {};
-const CMP = DATA.comparison;
 R.forEach((r, i) => { r.id = 'p' + i; });
 
 // ==========================================
@@ -669,11 +668,6 @@ function recomputeCatalog() {
   if (document.getElementById('map').classList.contains('active')) renderMap();
 }
 buildStats();
-
-document.getElementById('cbNewSpec').innerHTML = `<div class="cb-head"><div class="cb-icon add">🆕</div><div><h3>Нові спеціальності</h3></div></div>` + CMP.newSpecs.map(s => `<div class="chg-item"><span class="chg-spec">${escapeHtml(s.name)}</span><span class="chg-badge add">+${s.places} місць</span></div>`).join('');
-document.getElementById('cbNewBase').innerHTML = `<div class="cb-head"><div class="cb-icon add">➕</div><div><h3>Нові бази</h3></div></div>` + CMP.newBases.map(b => `<div class="chg-item"><span class="chg-spec">${escapeHtml(b.spec)}</span><span>${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span><span class="chg-badge add">+${b.places}</span></div>`).join('');
-document.getElementById('cbRemBase').innerHTML = `<div class="cb-head"><div class="cb-icon rem">➖</div><div><h3>Вилучені бази</h3></div></div>` + CMP.removedBases.map(b => `<div class="chg-item"><span class="chg-spec">${escapeHtml(b.spec)}</span><span>${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span><span class="chg-badge rem">${b.places}</span></div>`).join('');
-document.getElementById('cbChg').innerHTML = `<div class="cb-head"><div class="cb-icon chg">📊</div><div><h3>Зміни кількості місць</h3></div></div>` + CMP.placeChanges.map(c => `<div class="chg-item"><span class="chg-spec">${escapeHtml(c.spec)}</span><span>${escapeHtml(c.city)} · ${escapeHtml(c.base)}</span><span><span class="old-n">${c.old}</span><span class="arr">→</span><span class="new-n">${c.new}</span></span></div>`).join('');
 
 updateFavBadge(); render();
 
