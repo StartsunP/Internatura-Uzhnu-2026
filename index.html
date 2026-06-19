@@ -203,6 +203,8 @@
     .fc-prio-n { width: 18px; height: 18px; font-size: 0.64rem !important; }
     .fc-detail-title { font-size: 0.64rem; margin-bottom: 7px; }
     .fc-filterbar > * { width: 100%; }
+    .city-label-txt { font-size: 30px; stroke-width: 6px; }
+    .city-count-txt { font-size: 19px; }
   }
   body.force-mobile .toolbar { position: static; top: auto; }
   body.force-mobile .toolbar > * { width: 100%; min-width: 0; flex: 1 1 100%; }
@@ -210,6 +212,8 @@
   body.force-mobile .fc-prio-txt, body.force-mobile .fc-prio-code { font-size: 0.74rem !important; }
   body.force-mobile .fc-prio-n { width: 18px; height: 18px; font-size: 0.64rem !important; }
   body.force-mobile .fc-detail-title { font-size: 0.64rem; }
+  body.force-mobile .city-label-txt { font-size: 30px; stroke-width: 6px; }
+  body.force-mobile .city-count-txt { font-size: 19px; }
   .fc-prio.fc-prio-match { background: rgba(47,107,79,0.12); box-shadow: inset 3px 0 0 var(--moss); border-radius: 8px; padding-left: 9px; }
   [data-theme="dark"] .fc-prio.fc-prio-match { background: rgba(79,157,119,0.18); }
   .fc-result-hit { box-shadow: inset 3px 0 0 var(--gold); padding-left: 9px; display: inline-block; border-radius: 6px; }
@@ -615,7 +619,10 @@ function renderMap(){
   const sp = mapSpec.value, cd = cityData(sp), maxTotal = Math.max(1, ...Object.values(cd).map(c=>c.total));
   let svg = `<path class="region-shape" d="${MAPGEO.region}"/><path class="river" d="${MAPGEO.tisa}"/><g class="roads">${Object.values(MAPGEO.roads).map(d=>`<path class="road" d="${d}"/>`).join('')}</g>`;
   Object.entries(COORDS).sort((a,b)=>((cd[b[0]]?.total)||0)-((cd[a[0]]?.total)||0)).forEach(([city,[x,y]]) => {
-    const info = cd[city], has = info && info.total > 0, r = has ? 8 + (info.total/maxTotal)*16 : 5, hitR = Math.max(r + 5, 17), fix = [0, -(r+9), 'middle'];
+    const info = cd[city], has = info && info.total > 0, r = has ? 8 + (info.total/maxTotal)*16 : 5, hitR = Math.max(r + 5, 20);
+    // рознесення підписів близьких міст, щоб не налазили
+    const LABELFIX = { 'Розівка':[r+7,7,'start'], 'Берегове':[0,r+26,'middle'], 'Нижня Апша':[r+7,7,'start'] };
+    const fix = LABELFIX[city] || [0, -(r+11), 'middle'];
     svg += `<g class="city-grp" data-city="${escapeHtml(city)}"><circle class="city-hit" cx="${x}" cy="${y}" r="${hitR.toFixed(1)}"/><circle class="city-dot ${!has&&sp?'dimmed':''}" cx="${x}" cy="${y}" r="${r.toFixed(1)}"/>${has ? `<text class="city-count-txt" x="${x}" y="${y}">${info.total}</text>` : ''}<text class="city-label-txt ${!has&&sp?'dimmed':''}" x="${x+fix[0]}" y="${y+fix[1]}" text-anchor="${fix[2]}">${escapeHtml(city)}</text></g>`;
   });
   if(mapSvg) { mapSvg.innerHTML = svg; mapSvg.querySelectorAll('.city-grp').forEach(grp => { grp.addEventListener('click', () => { mapSvg.querySelectorAll('.city-grp').forEach(o=>o.classList.remove('sel')); grp.classList.add('sel'); const c=grp.dataset.city, cdAll=cityData(mapSpec.value)[c]; if(!cdAll||!cdAll.total){ mapDetail.innerHTML=`<div class="md-city">${escapeHtml(c)}</div><div class="md-empty">За обраною спеціальністю тут немає місць.</div>`; return; } mapDetail.innerHTML=`<div class="md-city">${escapeHtml(c)}</div><div class="md-total">${cdAll.total} місць</div>`+cdAll.rows.map(r=>`<div class="md-row"><span class="s">${escapeHtml(r.spec)}<span class="b">${escapeHtml(r.facShort)}</span></span><span class="c">${r.count}</span></div>`).join(''); }); }); }
