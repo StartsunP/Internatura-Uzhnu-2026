@@ -153,6 +153,24 @@
   body.force-pc { min-width: 1040px; }
   body.force-mobile .wrap { max-width: 460px; }
   body.force-mobile nav.tabs .wrap { max-width: 460px; }
+  /* Кнопка "вгору до фільтрів" */
+  .to-top { position: fixed; right: 16px; bottom: 16px; width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--moss); color: #fff; font-size: 1.4rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.25); cursor: pointer; display: none; z-index: 60; line-height: 1; }
+  .to-top.show { display: block; }
+  /* Компактні пріоритети + нерухоме меню пошуку на телефоні */
+  @media (max-width: 600px) {
+    .toolbar { position: static; top: auto; padding: 14px; }
+    .toolbar > * { width: 100%; min-width: 0; flex: 1 1 100%; }
+    .fc-detail-inner { padding: 10px 2px 12px; }
+    .fc-prio { font-size: 0.74rem; gap: 7px; padding: 5px 0; }
+    .fc-prio-n { width: 18px; height: 18px; font-size: 0.64rem; }
+    .fc-detail-title { font-size: 0.64rem; margin-bottom: 7px; }
+    .fc-filterbar > * { width: 100%; }
+  }
+  body.force-mobile .toolbar { position: static; top: auto; }
+  body.force-mobile .toolbar > * { width: 100%; min-width: 0; flex: 1 1 100%; }
+  body.force-mobile .fc-prio { font-size: 0.74rem; gap: 7px; padding: 5px 0; }
+  body.force-mobile .fc-prio-n { width: 18px; height: 18px; font-size: 0.64rem; }
+  body.force-mobile .fc-detail-title { font-size: 0.64rem; }
   .fc-prio.fc-prio-match { background: rgba(47,107,79,0.12); box-shadow: inset 3px 0 0 var(--moss); border-radius: 8px; padding-left: 9px; }
   [data-theme="dark"] .fc-prio.fc-prio-match { background: rgba(79,157,119,0.18); }
   .fc-result-hit { box-shadow: inset 3px 0 0 var(--gold); padding-left: 9px; display: inline-block; border-radius: 6px; }
@@ -430,6 +448,8 @@
   </section>
 
 </main>
+
+<button id="toTop" class="to-top" title="Вгору до пошуку / фільтрів" aria-label="Вгору">↑</button>
 
 <script>
 // ==========================================
@@ -720,7 +740,7 @@ function updateDropdownLocks() {
         opt.disabled = false;
         opt.text = base + (isFinite(cap) ? '  · залишилось: ' + remaining : '');
         opt.style.color = 'var(--clay)';
-        opt.style.backgroundColor = 'var(--clay-light)';
+        opt.style.backgroundColor = '';
       }
     });
   });
@@ -1018,6 +1038,14 @@ function showLastUpdated(pib) {
   let mode = localStorage.getItem('view_mode') || 'auto';
   apply(mode);
   vt.addEventListener('click', function () { mode = modes[(modes.indexOf(mode) + 1) % modes.length]; apply(mode); });
+})();
+
+// Кнопка "вгору до фільтрів" — з'являється при прокручуванні вниз
+(function () {
+  const btn = document.getElementById('toTop');
+  if (!btn) return;
+  window.addEventListener('scroll', function () { btn.classList.toggle('show', window.scrollY > 380); }, { passive: true });
+  btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 })();
 
 // Розгортання/згортання рядка по кліку
