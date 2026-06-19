@@ -157,6 +157,31 @@
   /* Кнопка "вгору до фільтрів" */
   .to-top { position: fixed; right: 16px; top: 64px; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--moss); color: #fff; font-size: 1.3rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.3); cursor: pointer; display: none; z-index: 60; line-height: 1; }
   .to-top.show { display: block; }
+  /* Кастомний випадаючий список баз (Мій вибір) */
+  .cd { position: relative; margin-bottom: 16px; max-width: 760px; }
+  .cd-trigger { width: 100%; text-align: left; border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 36px 12px 14px; font-size: 0.92rem; font-family: inherit; background: var(--paper); color: var(--ink); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cd-trigger::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+  .cd.open .cd-trigger { border-color: var(--moss); background: var(--card); }
+  .cd-panel { display: none; position: absolute; z-index: 70; left: 0; right: 0; margin-top: 4px; background: var(--card); border: 1.5px solid var(--moss); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+  .cd.open .cd-panel { display: block; }
+  .cd-search { width: 100%; border: 0; border-bottom: 1px solid var(--line); padding: 10px 12px; font-size: 0.86rem; font-family: inherit; background: var(--card); color: var(--ink); outline: none; }
+  .cd-list { max-height: 300px; overflow-y: auto; }
+  .cd-opt { display: flex; align-items: center; gap: 8px; padding: 7px 12px; font-size: 0.82rem; line-height: 1.25; cursor: pointer; border-bottom: 1px solid var(--line); }
+  .cd-opt:last-child { border-bottom: 0; }
+  .cd-opt:hover { background: var(--hover); }
+  .cd-opt.sel { background: var(--moss-light); }
+  .cd-opt.disabled { opacity: 0.7; cursor: not-allowed; }
+  .cd-code { font-weight: 700; color: var(--clay); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .cd-main { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+  .cd-tag { flex-shrink: 0; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 7px; white-space: nowrap; }
+  .cd-tag.rem { background: var(--clay-light); color: var(--clay); }
+  .cd-tag.taken { background: var(--moss-light); color: var(--moss-dark); }
+  .cd-tag.full { background: var(--red-light); color: var(--red); }
+  .cd-empty { padding: 16px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+  [data-theme="dark"] .cd-tag.rem { background: rgba(193,99,58,0.25); color: #e8a07a; }
+  [data-theme="dark"] .cd-tag.taken { background: rgba(79,157,119,0.22); color: #7bb494; }
+  [data-theme="dark"] .cd-tag.full { background: rgba(224,122,104,0.22); color: #e8a095; }
+  [data-theme="dark"] .cd-opt.sel { background: rgba(79,157,119,0.18); }
   /* Компактні пріоритети + нерухоме меню пошуку на телефоні */
   @media (max-width: 600px) {
     .toolbar { position: static; top: auto; padding: 14px; }
@@ -745,6 +770,7 @@ function updateDropdownLocks() {
       }
     });
   });
+  if (typeof cdRefresh === 'function') cdRefresh();
 }
 prios.forEach(select => select.addEventListener('change', updateDropdownLocks));
 
@@ -793,6 +819,7 @@ async function fetchInitialData() {
     data.students.forEach(name => pibSelect.add(new Option(name, name)));
 
     prios.forEach(select => { select.length = 1; data.bases.forEach(base => select.add(new Option(base, base))); });
+    cdInit();
     
     globalForecastData = data.forecast;
     globalChoicesMap = data.choices || {};
@@ -1048,6 +1075,71 @@ function showLastUpdated(pib) {
   window.addEventListener('scroll', function () { btn.classList.toggle('show', window.scrollY > 380); }, { passive: true });
   btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 })();
+
+// ====== КАСТОМНИЙ ВИПАДАЮЧИЙ СПИСОК для пріоритетів (нативний <select> лишається джерелом істини) ======
+function cdCloseAll() { document.querySelectorAll('.cd.open').forEach(x => x.classList.remove('open')); }
+function cdRenderList(w, q) {
+  const sel = w._sel;
+  const placed = placedAboveMe();
+  const chosen = prios.map(s => s.value).filter(Boolean);
+  let html = '';
+  Array.from(sel.options).forEach(opt => {
+    const base = opt.value;
+    if (!base) return;
+    if (q && base.toLowerCase().indexOf(q) === -1) return;
+    const b = parseBase(base), cap = parseCap(base);
+    const remaining = Math.max(0, cap - (placed[base] || 0));
+    const isCurrent = sel.value === base;
+    const inOther = chosen.includes(base) && !isCurrent;
+    let tag = '', cls = '', disabled = false;
+    if (isCurrent) { tag = '✓ ваш вибір'; cls = 'taken'; }
+    else if (inOther) { tag = '✓ обране'; cls = 'taken'; disabled = true; }
+    else if (remaining <= 0) { tag = 'місць немає'; cls = 'full'; disabled = true; }
+    else if (isFinite(cap)) { tag = 'залишилось: ' + remaining; cls = 'rem'; }
+    html += `<div class="cd-opt${isCurrent ? ' sel' : ''}${disabled ? ' disabled' : ''}" data-val="${escapeHtml(base)}"><span class="cd-code">${escapeHtml(b.code)}</span><span class="cd-main"><b>${escapeHtml(b.spec)}</b> · ${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span>${tag ? `<span class="cd-tag ${cls}">${tag}</span>` : ''}</div>`;
+  });
+  w.querySelector('.cd-list').innerHTML = html || '<div class="cd-empty">Нічого не знайдено</div>';
+}
+function cdToggle(w) {
+  const wasOpen = w.classList.contains('open');
+  cdCloseAll();
+  if (!wasOpen) {
+    w.classList.add('open');
+    const s = w.querySelector('.cd-search'); s.value = '';
+    cdRenderList(w, '');
+    setTimeout(() => s.focus(), 0);
+  }
+}
+function cdRefresh() {
+  prios.forEach(sel => {
+    const w = sel._cd; if (!w) return;
+    w.querySelector('.cd-trigger').textContent = sel.value || 'Оберіть базу…';
+    if (w.classList.contains('open')) cdRenderList(w, w.querySelector('.cd-search').value.trim().toLowerCase());
+  });
+}
+function cdInit() {
+  prios.forEach(sel => {
+    if (sel._cd) return;
+    sel.style.display = 'none';
+    const w = document.createElement('div');
+    w.className = 'cd';
+    w.innerHTML = '<button type="button" class="cd-trigger">Оберіть базу…</button><div class="cd-panel"><input type="text" class="cd-search" placeholder="Пошук бази…" autocomplete="off"><div class="cd-list"></div></div>';
+    sel.parentNode.insertBefore(w, sel.nextSibling);
+    sel._cd = w; w._sel = sel;
+    w.querySelector('.cd-trigger').addEventListener('click', function (e) { e.stopPropagation(); cdToggle(w); });
+    w.querySelector('.cd-search').addEventListener('input', function () { cdRenderList(w, this.value.trim().toLowerCase()); });
+    w.querySelector('.cd-list').addEventListener('click', function (e) {
+      const opt = e.target.closest('.cd-opt');
+      if (!opt || opt.classList.contains('disabled')) return;
+      sel.value = opt.dataset.val;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+      w.classList.remove('open');
+    });
+  });
+  cdRefresh();
+}
+document.addEventListener('click', function (e) { if (!e.target.closest('.cd')) cdCloseAll(); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cdCloseAll(); });
 
 // Розгортання/згортання рядка по кліку
 document.getElementById('forecastBody').addEventListener('click', function(e) {
