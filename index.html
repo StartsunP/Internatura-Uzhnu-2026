@@ -173,6 +173,15 @@
   .cd-opt.disabled { opacity: 0.7; cursor: not-allowed; }
   .cd-code { font-weight: 700; color: var(--clay); flex-shrink: 0; font-variant-numeric: tabular-nums; }
   .cd-main { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+  .cd-loc { display: inline; }
+  @media (max-width: 600px) {
+    .cd-main { white-space: normal; }
+    .cd-loc { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+    .cd-opt { align-items: flex-start; }
+  }
+  body.force-mobile .cd-main { white-space: normal; }
+  body.force-mobile .cd-loc { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
+  body.force-mobile .cd-opt { align-items: flex-start; }
   .cd-tag { flex-shrink: 0; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 7px; white-space: nowrap; }
   .cd-tag.rem { background: #ffe3b3; color: #9a5800; }
   .cd-tag.taken { background: var(--moss-light); color: var(--moss-dark); }
@@ -1056,8 +1065,8 @@ function showLastUpdated(pib) {
   const vt = document.getElementById('viewToggle');
   if (!vt) return;
   const modes = ['auto', 'pc', 'mobile'];
-  const icons = { auto: '🔄 Авто', pc: '🖥 ПК', mobile: '📱 Телефон' };
-  const titles = { auto: 'Вигляд сторінки: Авто (за пристроєм). Натисніть → ПК', pc: 'Вигляд сторінки: ПК. Натисніть → Телефон', mobile: 'Вигляд сторінки: Телефон. Натисніть → Авто' };
+  const icons = { auto: 'Режим: Авто  →  🖥 ПК', pc: 'Режим: ПК  →  📱 Телефон', mobile: 'Режим: Телефон  →  🔄 Авто' };
+  const titles = { auto: 'Зараз: Авто (за пристроєм). Клік → ПК-версія', pc: 'Зараз: ПК-версія. Клік → версія для телефону', mobile: 'Зараз: версія для телефону. Клік → Авто' };
   function apply(m) {
     document.body.classList.remove('force-pc', 'force-mobile');
     if (m === 'pc') document.body.classList.add('force-pc');
@@ -1098,7 +1107,7 @@ function cdRenderList(w, q) {
     else if (inOther) { tag = '✓ обране'; cls = 'taken'; disabled = true; }
     else if (remaining <= 0) { tag = 'місць немає'; cls = 'full'; disabled = true; }
     else if (isFinite(cap)) { tag = 'залишилось: ' + remaining; cls = 'rem'; }
-    html += `<div class="cd-opt${isCurrent ? ' sel' : ''}${disabled ? ' disabled' : ''}" data-val="${escapeHtml(base)}"><span class="cd-code">${escapeHtml(b.code)}</span><span class="cd-main"><b>${escapeHtml(b.spec)}</b> · ${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span>${tag ? `<span class="cd-tag ${cls}">${tag}</span>` : ''}</div>`;
+    html += `<div class="cd-opt${isCurrent ? ' sel' : ''}${disabled ? ' disabled' : ''}" data-val="${escapeHtml(base)}"><span class="cd-code">${escapeHtml(b.code)}</span><span class="cd-main"><b>${escapeHtml(b.spec)}</b><span class="cd-loc"> · ${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span></span>${tag ? `<span class="cd-tag ${cls}">${tag}</span>` : ''}</div>`;
   });
   w.querySelector('.cd-list').innerHTML = html || '<div class="cd-empty">Нічого не знайдено</div>';
 }
