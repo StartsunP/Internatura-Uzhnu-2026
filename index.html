@@ -136,7 +136,8 @@
   .fc-prio:last-child { border-bottom: 0; }
   .fc-prio-n { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--moss); color: #fff; font-weight: 700; font-size: 0.74rem; display: flex; align-items: center; justify-content: center; }
   .fc-prio-code { flex-shrink: 0; font-weight: 700; color: var(--clay); font-variant-numeric: tabular-nums; }
-  .fc-prio-txt { color: var(--ink); line-height: 1.4; }
+  .fc-prio-txt { color: var(--ink); line-height: 1.4; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fc-upd { display: block; font-size: 0.66rem; color: var(--muted); font-weight: 500; margin-top: 2px; }
   .fc-prio-base { color: var(--muted); }
   .fc-noprio { color: var(--muted); font-style: italic; font-size: 0.86rem; padding: 4px 0; }
   .fc-filterbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--card); padding: 14px 16px; border-radius: 14px; box-shadow: var(--shadow); margin-bottom: 16px; }
@@ -154,7 +155,7 @@
   body.force-mobile .wrap { max-width: 460px; }
   body.force-mobile nav.tabs .wrap { max-width: 460px; }
   /* Кнопка "вгору до фільтрів" */
-  .to-top { position: fixed; right: 16px; bottom: 16px; width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--moss); color: #fff; font-size: 1.4rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.25); cursor: pointer; display: none; z-index: 60; line-height: 1; }
+  .to-top { position: fixed; right: 16px; top: 64px; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--moss); color: #fff; font-size: 1.3rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.3); cursor: pointer; display: none; z-index: 60; line-height: 1; }
   .to-top.show { display: block; }
   /* Компактні пріоритети + нерухоме меню пошуку на телефоні */
   @media (max-width: 600px) {
@@ -738,8 +739,8 @@ function updateDropdownLocks() {
         opt.style.backgroundColor = 'var(--red-light)';
       } else {
         opt.disabled = false;
-        opt.text = base + (isFinite(cap) ? '  · залишилось: ' + remaining : '');
-        opt.style.color = 'var(--clay)';
+        opt.text = base + (isFinite(cap) ? '  🟧 залишилось: ' + remaining : '');
+        opt.style.color = '';
         opt.style.backgroundColor = '';
       }
     });
@@ -954,7 +955,7 @@ function loadLiveForecast() {
     const nameHit = fcNameQuery && String(pib).toLowerCase().includes(fcNameQuery);
     html +=
       `<tr class="fc-row${openCls}${nameHit ? ' fc-namehit' : ''}" data-row="${i}" data-pib="${escapeHtml(pib)}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
-      `<td style="font-weight:600;">${escapeHtml(pib)}</td>`+
+      `<td style="font-weight:600;">${escapeHtml(pib)}${(globalUpdated && globalUpdated[pib]) ? `<span class="fc-upd">↻ ${escapeHtml(String(globalUpdated[pib]).slice(0, 16))}</span>` : ''}</td>`+
       `<td><span class="status-badge ${badge}">${row[9]||"Не заповнено"}</span></td>`+
       `<td style="font-size:0.85rem;">${resultCell}</td></tr>`+
       `<tr class="fc-detail${openCls}" data-detail="${i}"><td colspan="4"><div class="fc-detail-inner"><div class="fc-detail-title">Пріоритети студента</div>${buildPrioHtml(pib, matched)}</div></td></tr>`;
