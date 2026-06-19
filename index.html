@@ -28,13 +28,13 @@
 
   /* HERO */
   .hero { background: radial-gradient(120% 120% at 80% -20%, rgba(184,137,63,0.18), transparent 60%), linear-gradient(160deg, var(--moss-dark) 0%, var(--moss) 100%); color: #fff; padding: 48px 0 44px; position: relative; overflow: hidden; }
-  .hero .wrap { position: relative; z-index: 2; }
+  .hero .wrap { position: relative; z-index: 2; text-align: center; }
   .eyebrow { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.75; font-weight: 600; margin-bottom: 14px; }
   .hero h1 { font-size: clamp(1.9rem, 5vw, 3.1rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; max-width: 16ch; }
-  .hero .lede { margin-top: 16px; font-size: 1.02rem; opacity: 0.9; max-width: 52ch; }
-  .hero-figures { display: grid; grid-template-columns: repeat(4, auto); gap: 22px 40px; margin-top: 34px; justify-content: start; }
-  @media (max-width: 600px) { .hero-figures { grid-template-columns: 1fr 1fr; gap: 18px 16px; } }
-  body.force-mobile .hero-figures { grid-template-columns: 1fr 1fr; gap: 18px 16px; }
+  .hero .lede { margin: 16px auto 0; font-size: 1.02rem; opacity: 0.9; max-width: 52ch; }
+  .hero-figures { display: grid; grid-template-columns: repeat(4, auto); gap: 22px 44px; margin-top: 34px; justify-content: center; }
+  @media (max-width: 600px) { .hero-figures { grid-template-columns: repeat(2, auto); gap: 20px 48px; justify-content: center; } }
+  body.force-mobile .hero-figures { grid-template-columns: repeat(2, auto); gap: 20px 48px; justify-content: center; }
   body.force-pc .hero-figures { grid-template-columns: repeat(4, auto); }
   .figure .n { font-size: 2.6rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
   .figure .l { font-size: 0.8rem; opacity: 0.78; margin-top: 4px; letter-spacing: 0.02em; }
@@ -42,16 +42,18 @@
 
   /* TABS */
   nav.tabs { position: sticky; top: 0; z-index: 50; background: var(--paper-blur); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); margin-top: -1px; }
-  nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; padding-top: 8px; padding-bottom: 8px; }
+  nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; padding-top: 8px; padding-bottom: 8px; justify-content: center; }
+  @media (max-width: 600px) { nav.tabs .wrap { justify-content: flex-start; } }
+  body.force-mobile nav.tabs .wrap { justify-content: flex-start; }
   nav.tabs button { border: 0; background: transparent; color: var(--muted); font-family: inherit; font-size: 0.88rem; font-weight: 600; padding: 9px 16px; border-radius: 9px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
   nav.tabs button:hover { color: var(--ink); background: rgba(47,107,79,0.07); }
   nav.tabs button.active { color: #fff; background: var(--moss); }
   nav.tabs .fav-tab.active { background: var(--clay); }
   /* Гамбургер-меню (другорядні дії) */
-  .nav-menu-wrap { position: relative; margin-left: auto; flex-shrink: 0; }
-  .nav-menu-btn { font-size: 1.2rem; line-height: 1; padding: 9px 14px !important; }
+  .nav-menu-btn { font-size: 1.2rem; line-height: 1; padding: 9px 14px !important; flex-shrink: 0; }
   .nav-menu-btn.active { color: #fff; background: var(--moss); }
-  .nav-menu { position: absolute; right: 0; top: calc(100% + 6px); background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 34px rgba(0,0,0,0.3); display: none; flex-direction: column; padding: 7px; min-width: 220px; z-index: 90; }
+  /* меню — fixed, поза контейнером вкладок з overflow (інакше обрізається); координати задає JS */
+  .nav-menu { position: fixed; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 34px rgba(0,0,0,0.35); display: none; flex-direction: column; padding: 7px; min-width: 230px; z-index: 160; }
   .nav-menu.open { display: flex; }
   .nav-menu > button { width: 100%; text-align: left !important; justify-content: flex-start; white-space: normal !important; font-size: 0.9rem !important; padding: 11px 13px !important; margin: 0 !important; border: 0 !important; border-radius: 10px !important; }
   .nav-menu > button:hover { background: var(--hover); }
@@ -413,20 +415,19 @@
     <button class="tab-btn" data-tab="live">⚡ Живий розподіл</button>
     <button class="tab-btn" data-tab="browse">Перелік місць</button>
     <button class="tab-btn" data-tab="map">Карта</button>
-
-    <div class="nav-menu-wrap">
-      <button class="nav-menu-btn" id="navMenuBtn" aria-label="Більше" title="Меню">☰</button>
-      <div class="nav-menu" id="navMenu">
-        <button class="tab-btn" data-tab="stats">📊 Статистика</button>
-        <button class="tab-btn fav-tab" data-tab="favs">★ Мій список <span class="fav-badge" id="favBadge">0</span></button>
-        <div class="nav-menu-sep"></div>
-        <button class="view-toggle" id="viewToggle">🔄 Авто</button>
-        <button class="theme-toggle" id="themeToggle">🌙 Тема</button>
-        <button class="help-btn" id="guideBtn" aria-label="Інструкція">❔ Як користуватися</button>
-      </div>
-    </div>
+    <button class="nav-menu-btn" id="navMenuBtn" aria-label="Більше" title="Меню">☰</button>
   </div>
 </nav>
+
+<!-- Випадаюче меню (поза навбаром — щоб не обрізалось overflow; позиціонується JS) -->
+<div class="nav-menu" id="navMenu">
+  <button class="tab-btn" data-tab="stats">📊 Статистика</button>
+  <button class="tab-btn fav-tab" data-tab="favs">★ Мій список <span class="fav-badge" id="favBadge">0</span></button>
+  <div class="nav-menu-sep"></div>
+  <button class="view-toggle" id="viewToggle">🔄 Авто</button>
+  <button class="theme-toggle" id="themeToggle">🌙 Тема</button>
+  <button class="help-btn" id="guideBtn" aria-label="Інструкція">❔ Як користуватися</button>
+</div>
 
 <main class="wrap">
 
@@ -1511,19 +1512,28 @@ thBtn.addEventListener('click', () => {
   thBtn.textContent = themeLabel();
 });
 
-// Гамбургер-меню (другорядні дії): відкриття/закриття
+// Гамбургер-меню (другорядні дії): відкриття/закриття + позиціонування
 (function () {
-  const wrap = document.querySelector('.nav-menu-wrap');
   const btn = document.getElementById('navMenuBtn');
   const menu = document.getElementById('navMenu');
   if (!btn || !menu) return;
-  btn.addEventListener('click', function (e) { e.stopPropagation(); menu.classList.toggle('open'); });
-  // закрити при кліку поза меню
-  document.addEventListener('click', function (e) { if (!e.target.closest('.nav-menu-wrap')) menu.classList.remove('open'); });
+  function positionMenu() {
+    const b = btn.getBoundingClientRect();
+    menu.style.top = (b.bottom + 6) + 'px';
+    menu.style.right = Math.max(8, window.innerWidth - b.right) + 'px';
+  }
+  function openMenu() { positionMenu(); menu.classList.add('open'); btn.classList.add('active'); }
+  function closeMenu() { menu.classList.remove('open'); btn.classList.remove('active'); }
+  btn.addEventListener('click', function (e) { e.stopPropagation(); menu.classList.contains('open') ? closeMenu() : openMenu(); });
+  // закрити при кліку поза меню/кнопкою
+  document.addEventListener('click', function (e) { if (!e.target.closest('#navMenu') && !e.target.closest('#navMenuBtn')) closeMenu(); });
   // закрити при виборі вкладки або відкритті інструкції (делегування — переживає клонування .tab-btn)
   menu.addEventListener('click', function (e) {
-    if (e.target.closest('.tab-btn') || e.target.closest('#guideBtn')) menu.classList.remove('open');
+    if (e.target.closest('.tab-btn') || e.target.closest('#guideBtn')) closeMenu();
   });
+  // при прокрутці/зміні розміру меню переміщується або ховається
+  window.addEventListener('scroll', function () { if (menu.classList.contains('open')) closeMenu(); }, { passive: true });
+  window.addEventListener('resize', function () { if (menu.classList.contains('open')) positionMenu(); });
 })();
 
 fetchInitialData();
