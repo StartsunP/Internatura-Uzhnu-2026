@@ -22,8 +22,8 @@
     --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--paper); color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--paper); color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 18px; }
 
   /* HERO */
@@ -250,9 +250,10 @@
   .city-dot { fill: var(--moss); stroke: #fff; stroke-width: 2.5; transition: fill 0.15s; }
   .city-grp:hover .city-dot, .city-grp.sel .city-dot { fill: var(--clay); }
   .city-dot.dimmed { fill: #c2cdc4; }
-  .city-label-txt { font-size: 13px; font-weight: 600; fill: var(--ink); pointer-events: none; paint-order: stroke; stroke: rgba(255,255,255,0.9); stroke-width: 3.5px; stroke-linejoin: round; }
+  .city-label-txt { font-size: 21px; font-weight: 700; fill: var(--ink); pointer-events: none; paint-order: stroke; stroke: rgba(255,255,255,0.92); stroke-width: 5px; stroke-linejoin: round; }
   [data-theme="dark"] .city-label-txt { fill: #f3f8f4; stroke: rgba(6,16,11,0.92); }
-  .city-count-txt { font-size: 11px; font-weight: 800; fill: #fff; pointer-events: none; text-anchor: middle; dominant-baseline: central; }
+  .city-count-txt { font-size: 15px; font-weight: 800; fill: #fff; pointer-events: none; text-anchor: middle; dominant-baseline: central; }
+  .city-hit { fill: transparent; pointer-events: all; cursor: pointer; }
   .map-detail { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 22px; min-height: 200px; }
   .md-empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 40px 10px; }
   .md-city { font-size: 1.2rem; font-weight: 800; }
@@ -614,8 +615,8 @@ function renderMap(){
   const sp = mapSpec.value, cd = cityData(sp), maxTotal = Math.max(1, ...Object.values(cd).map(c=>c.total));
   let svg = `<path class="region-shape" d="${MAPGEO.region}"/><path class="river" d="${MAPGEO.tisa}"/><g class="roads">${Object.values(MAPGEO.roads).map(d=>`<path class="road" d="${d}"/>`).join('')}</g>`;
   Object.entries(COORDS).sort((a,b)=>((cd[b[0]]?.total)||0)-((cd[a[0]]?.total)||0)).forEach(([city,[x,y]]) => {
-    const info = cd[city], has = info && info.total > 0, r = has ? 8 + (info.total/maxTotal)*16 : 5, fix = [0, -(r+6), 'middle'];
-    svg += `<g class="city-grp" data-city="${escapeHtml(city)}"><circle class="city-dot ${!has&&sp?'dimmed':''}" cx="${x}" cy="${y}" r="${r.toFixed(1)}"/>${has ? `<text class="city-count-txt" x="${x}" y="${y}">${info.total}</text>` : ''}<text class="city-label-txt ${!has&&sp?'dimmed':''}" x="${x+fix[0]}" y="${y+fix[1]}" text-anchor="${fix[2]}">${escapeHtml(city)}</text></g>`;
+    const info = cd[city], has = info && info.total > 0, r = has ? 8 + (info.total/maxTotal)*16 : 5, hitR = Math.max(r + 5, 17), fix = [0, -(r+9), 'middle'];
+    svg += `<g class="city-grp" data-city="${escapeHtml(city)}"><circle class="city-hit" cx="${x}" cy="${y}" r="${hitR.toFixed(1)}"/><circle class="city-dot ${!has&&sp?'dimmed':''}" cx="${x}" cy="${y}" r="${r.toFixed(1)}"/>${has ? `<text class="city-count-txt" x="${x}" y="${y}">${info.total}</text>` : ''}<text class="city-label-txt ${!has&&sp?'dimmed':''}" x="${x+fix[0]}" y="${y+fix[1]}" text-anchor="${fix[2]}">${escapeHtml(city)}</text></g>`;
   });
   if(mapSvg) { mapSvg.innerHTML = svg; mapSvg.querySelectorAll('.city-grp').forEach(grp => { grp.addEventListener('click', () => { mapSvg.querySelectorAll('.city-grp').forEach(o=>o.classList.remove('sel')); grp.classList.add('sel'); const c=grp.dataset.city, cdAll=cityData(mapSpec.value)[c]; if(!cdAll||!cdAll.total){ mapDetail.innerHTML=`<div class="md-city">${escapeHtml(c)}</div><div class="md-empty">За обраною спеціальністю тут немає місць.</div>`; return; } mapDetail.innerHTML=`<div class="md-city">${escapeHtml(c)}</div><div class="md-total">${cdAll.total} місць</div>`+cdAll.rows.map(r=>`<div class="md-row"><span class="s">${escapeHtml(r.spec)}<span class="b">${escapeHtml(r.facShort)}</span></span><span class="c">${r.count}</span></div>`).join(''); }); }); }
 }
