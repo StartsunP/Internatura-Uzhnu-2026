@@ -198,15 +198,17 @@
     .toolbar { position: static; top: auto; padding: 14px; }
     .toolbar > * { width: 100%; min-width: 0; flex: 1 1 100%; }
     .fc-detail-inner { padding: 10px 2px 12px; }
-    .fc-prio { font-size: 0.74rem; gap: 7px; padding: 5px 0; }
-    .fc-prio-n { width: 18px; height: 18px; font-size: 0.64rem; }
+    .fc-prio { font-size: 0.74rem !important; gap: 7px; padding: 5px 0; }
+    .fc-prio-txt, .fc-prio-code { font-size: 0.74rem !important; }
+    .fc-prio-n { width: 18px; height: 18px; font-size: 0.64rem !important; }
     .fc-detail-title { font-size: 0.64rem; margin-bottom: 7px; }
     .fc-filterbar > * { width: 100%; }
   }
   body.force-mobile .toolbar { position: static; top: auto; }
   body.force-mobile .toolbar > * { width: 100%; min-width: 0; flex: 1 1 100%; }
-  body.force-mobile .fc-prio { font-size: 0.74rem; gap: 7px; padding: 5px 0; }
-  body.force-mobile .fc-prio-n { width: 18px; height: 18px; font-size: 0.64rem; }
+  body.force-mobile .fc-prio { font-size: 0.74rem !important; gap: 7px; padding: 5px 0; }
+  body.force-mobile .fc-prio-txt, body.force-mobile .fc-prio-code { font-size: 0.74rem !important; }
+  body.force-mobile .fc-prio-n { width: 18px; height: 18px; font-size: 0.64rem !important; }
   body.force-mobile .fc-detail-title { font-size: 0.64rem; }
   .fc-prio.fc-prio-match { background: rgba(47,107,79,0.12); box-shadow: inset 3px 0 0 var(--moss); border-radius: 8px; padding-left: 9px; }
   [data-theme="dark"] .fc-prio.fc-prio-match { background: rgba(79,157,119,0.18); }
@@ -292,7 +294,7 @@
     <h1>Перелік баз та розподіл 2026</h1>
     <p class="lede">Подавайте пріоритети онлайн, слідкуйте за живим розподілом, аналізуйте статистику та карти наявних вакансій.</p>
     <div class="hero-figures">
-      <div class="figure"><div class="n">181<span class="delta">+19</span></div><div class="l">місць усього</div></div>
+      <div class="figure"><div class="n">181</div><div class="l">місць усього</div></div>
       <div class="figure"><div class="n">21</div><div class="l">спеціальностей</div></div>
       <div class="figure"><div class="n">31</div><div class="l">закладів</div></div>
       <div class="figure"><div class="n">14</div><div class="l">міст і громад</div></div>
@@ -307,7 +309,7 @@
     <button class="tab-btn" data-tab="browse">Перелік місць</button>
     <button class="tab-btn" data-tab="map">Карта</button>
     <button class="tab-btn" data-tab="stats">Статистика</button>
-    <button class="tab-btn" data-tab="changes">Що змінилось</button>
+
     <button class="tab-btn fav-tab" data-tab="favs">★ Мій список <span class="fav-badge" id="favBadge">0</span></button>
     <button class="view-toggle" id="viewToggle">🔄 Авто</button>
     <button class="theme-toggle" id="themeToggle" title="Світла / темна тема">🌙</button>
@@ -455,19 +457,6 @@
     </div>
   </section>
 
-  <section class="panel" id="changes">
-    <h2 class="section-title">Що змінилось</h2>
-    <div class="change-stats">
-      <div class="cstat green"><div class="n">+4</div><div class="l">нові спеціальності</div></div>
-      <div class="cstat green"><div class="n">+3</div><div class="l">нові бази</div></div>
-      <div class="cstat red"><div class="n">−2</div><div class="l">вилучені бази</div></div>
-      <div class="cstat gold"><div class="n">+19</div><div class="l">місць загалом</div></div>
-    </div>
-    <div class="change-block" id="cbNewSpec"></div>
-    <div class="change-block" id="cbNewBase"></div>
-    <div class="change-block" id="cbRemBase"></div>
-    <div class="change-block" id="cbChg"></div>
-  </section>
 
   <section class="panel" id="favs">
     <h2 class="section-title">★ Мій список</h2>
