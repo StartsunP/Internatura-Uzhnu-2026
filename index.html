@@ -153,8 +153,10 @@
   .count-badge { display: inline-block; min-width: 30px; text-align: center; font-weight: 700; background: var(--moss); color: #fff; border-radius: 8px; padding: 3px 9px; font-size: 0.88rem; }
   .rem-pill { display: inline-block; margin-top: 5px; font-size: 0.7rem; font-weight: 700; padding: 1px 7px; border-radius: 8px; background: var(--moss-light); color: var(--moss-dark); white-space: nowrap; }
   .rem-pill.rem-0 { background: var(--red-light); color: var(--red); }
+  .rem-pill.rem-bump { background: #fff0d6; color: #8a5a00; }
   [data-theme="dark"] .rem-pill { background: rgba(79,157,119,0.2); color: #7bb494; }
   [data-theme="dark"] .rem-pill.rem-0 { background: rgba(224,122,104,0.2); color: #e8a095; }
+  [data-theme="dark"] .rem-pill.rem-bump { background: rgba(211,168,95,0.22); color: #e6c478; }
   .zvo-tag { display: inline-block; font-size: 0.72rem; color: var(--gold); font-weight: 600; border: 1px solid #e8d5b0; border-radius: 6px; padding: 1px 6px; margin: 1px 2px 1px 0; white-space: nowrap; }
   .star-btn { border: 0; background: transparent; cursor: pointer; font-size: 1.15rem; color: #cdd3cb; transition: transform 0.12s; }
   .star-btn.on { color: var(--gold); }
@@ -191,6 +193,9 @@
   .fc-filter-count { color: var(--muted); font-size: 0.85rem; margin-left: auto; font-weight: 600; }
   .fc-name { flex: 1; min-width: 180px; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 0.86rem; font-family: inherit; background: var(--paper); color: var(--ink); }
   .fc-row.fc-namehit > td { background: rgba(184,137,63,0.28) !important; }
+  .fc-row.fc-row-me > td { background: rgba(184,137,63,0.16) !important; box-shadow: inset 3px 0 0 var(--gold); }
+  .fc-row.fc-row-me.open > td { background: rgba(184,137,63,0.22) !important; }
+  .fc-me-badge { display: inline-block; margin-left: 6px; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.03em; background: var(--gold); color: #fff; border-radius: 6px; padding: 1px 6px; vertical-align: middle; }
   .deadline-banner { padding: 12px 14px; border-radius: 11px; font-weight: 700; font-size: 0.9rem; margin-bottom: 16px; background: var(--clay-light); color: var(--clay); text-align: center; }
   .deadline-banner.locked { background: var(--red-light); color: var(--red); }
   .last-updated { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 6px; margin-bottom: 10px; font-weight: 600; }
@@ -289,12 +294,16 @@
   .cd-tag.rem { background: #ffe3b3; color: #9a5800; }
   .cd-tag.taken { background: var(--moss-light); color: var(--moss-dark); }
   .cd-tag.full { background: #f6c9c2; color: #bf2419; }
+  .cd-tag.bump { background: #ffe0a3; color: #8a5a00; }
+  .cd-tag.move { background: var(--moss-light); color: var(--moss-dark); }
   .cd-empty { padding: 16px; text-align: center; color: var(--muted); font-size: 0.85rem; }
   .view-toggle { font-size: 0.78rem; font-weight: 600; border: 1.5px solid var(--line); border-radius: 9px; padding: 6px 11px; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; flex-shrink: 0; margin-left: auto; font-family: inherit; }
   .view-toggle:hover { color: var(--ink); border-color: var(--moss); }
   [data-theme="dark"] .cd-tag.rem { background: rgba(230,170,70,0.25); color: #ecc270; }
   [data-theme="dark"] .cd-tag.taken { background: rgba(79,157,119,0.22); color: #7bb494; }
   [data-theme="dark"] .cd-tag.full { background: rgba(230,70,55,0.32); color: #f5897a; }
+  [data-theme="dark"] .cd-tag.bump { background: rgba(211,168,95,0.28); color: #e6c478; }
+  [data-theme="dark"] .cd-tag.move { background: rgba(79,157,119,0.22); color: #7bb494; }
   [data-theme="dark"] .cd-opt.sel { background: rgba(79,157,119,0.18); }
   /* Компактні пріоритети + нерухоме меню пошуку на телефоні */
   @media (max-width: 600px) {
@@ -908,8 +917,10 @@ if(mapSvg) mapSvg.setAttribute('viewBox', MAPGEO.viewBox); specs.forEach(s => ma
 // ====== ЖИВІ ДАНІ: каталог/статистика/залишки з аркуша "Бази" ======
 function remPill(r) {
   if (!globalRemaining || !r.option || globalRemaining[r.option] === undefined) return '';
-  const k = globalRemaining[r.option];
-  return `<div class="rem-pill ${k <= 0 ? 'rem-0' : ''}">${k <= 0 ? 'зайнято' : 'вільно: ' + k}</div>`;
+  const si = slotInfo(r.option);
+  if (si.state === 'bump') return `<div class="rem-pill rem-bump" title="Місця зайняті, але ваш рейтинг вищий — ви можете їх зайняти">↑ ви вище</div>`;
+  if (si.state === 'none') return `<div class="rem-pill rem-0">зайнято</div>`;
+  return `<div class="rem-pill">вільно: ${si.absRemaining}</div>`;
 }
 // Жива база + збагачення статичними полями (zvo/vacancy/facFull) за збігом spec+city+база
 function mergeLiveRecords(live) {
@@ -942,6 +953,36 @@ updateFavBadge(); render();
 // БЛОК 3: API, АВТОРИЗАЦІЯ ТА АВТОЗАПОВНЕННЯ 
 // ==========================================
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJU48A2qwTVJtl6YkAMeybJpQ1RyvVd21wmZJJ8LWOAV4EGh2W6aPX9Q5AKnVfTuRVcg/exec";
+const ADMIN_CONTACT = '@Syrochok';
+
+// Демо/скидання: відкриття сторінки з ?reset очищає збережені дані ЦЬОГО пристрою
+// (ПІБ, ПІН, обране, режим, показ інструкції) — щоб почати «з нуля» для запису відео.
+(function () {
+  if (/[?&#]reset\b/i.test(location.search + location.hash)) {
+    ['auth_pib', 'auth_pin', 'internatura_favs_v1', 'view_mode', 'seen_guide'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  }
+})();
+
+// Розшифровка кодів помилок для користувача (повна довідка — у ERROR_CODES.md)
+const ERR_CODES = {
+  E01: 'Немає звʼязку з сервером. Перевірте інтернет і спробуйте ще раз.',
+  E02: 'Не вказано ПІБ. Оберіть своє імʼя зі списку.',
+  E03: 'Невірний ПІН-код.',
+  E04: 'Вашого імені немає у списку для подачі (можливо, відмова або змінилось ПІБ).',
+  E05: 'Подача завершена — дедлайн минув.',
+  E06: 'Сервер зараз зайнятий. Зачекайте мить і спробуйте ще раз.',
+  E07: 'Не вдалося зберегти вибір через обмеження таблиці.',
+  E08: 'Технічна помилка на сервері.',
+  E09: 'Це імʼя вже зареєстроване — введіть свій ПІН.'
+};
+// Повідомлення про помилку для користувача: «Помилка E0X. <опис>. [звернутись до адміна]»
+function errText(res, fallbackCode) {
+  const code = (res && res.code && /^E\d\d$/.test(res.code)) ? res.code : (fallbackCode || 'E08');
+  const desc = ERR_CODES[code] || (res && res.message) || 'Невідома помилка.';
+  const noAsk = (code === 'E03' || code === 'E05' || code === 'E09'); // це не «поломка» — підказувати адміна не треба
+  return `Помилка ${code}. ${desc}` + (noAsk ? '' : ` Якщо повторюється — зверніться до адміністратора (${ADMIN_CONTACT}).`);
+}
 
 // --- Авторизація (самореєстрація з видачею ПІНу) ---
 let authedPib = null, authedPin = null, deadlineLocked = false;
@@ -994,6 +1035,8 @@ async function onPibChange() {
   clearAuthed();
   loadUserChoices(pib);            // показати поточний вибір (перегляд)
   showLastUpdated(pib);
+  render();                        // оновити «вільно/зайнято/ви вище» у переліку місць під рейтинг обраного
+  if (document.getElementById('live') && document.getElementById('live').classList.contains('active')) loadLiveForecast();
   if (!pib) { showAuthState('hint'); return; }
   showAuthState('hint');
   try {
@@ -1030,9 +1073,9 @@ async function doRegister() {
     } else if (res.code === 'already') {
       showAuthState('login');
     } else {
-      showAuthState('register'); alert(res.message || 'Не вдалося зареєструватися. Спробуйте ще раз.');
+      showAuthState('register'); alert(errText(res));
     }
-  } catch (e) { alert('Помилка мережі. Спробуйте ще раз.'); }
+  } catch (e) { alert(errText(null, 'E01')); }
   btn.disabled = false; btn.innerHTML = '🔑 Отримати ПІН-код';
 }
 
@@ -1047,8 +1090,8 @@ async function doLogin() {
     if (res.status === 'success') {
       setAuthed(pib, pin);
       showAuthState('ok', '✓ Ви увійшли як <b>' + escapeHtml(pib) + '</b>.');
-    } else { alert(res.message || 'Невірний ПІН'); }
-  } catch (e) { alert('Помилка мережі. Спробуйте ще раз.'); }
+    } else { alert(errText(res, 'E03')); }
+  } catch (e) { alert(errText(null, 'E01')); }
   btn.disabled = false; btn.innerHTML = 'Увійти';
 }
 let fcFilters = { spec: '', city: '', base: '', prio: '' };
@@ -1084,62 +1127,73 @@ function getMyRank() {
   return Infinity;
 }
 
-// Скільки місць кожної бази вже зайнято студентами ВИЩЕ за обраного (за попереднім розподілом)
-function placedAboveMe() {
+// Скільки місць кожної бази зайнято за попереднім розподілом: УСЬОГО та лише тими, хто ВИЩЕ за обраного
+function placedCounts() {
   const myRank = getMyRank();
-  const placed = {};
+  const total = {}, above = {};
   if (globalForecastData) {
     for (let i = 1; i < globalForecastData.length; i++) {
       const r = globalForecastData[i];
       const res = r[8]; // Попередній результат розподілу
-      if (res && Number(r[0]) < myRank) placed[res] = (placed[res] || 0) + 1;
+      if (!res || res === OUTSIDE) continue; // OUTSIDE не займає місцевих місць
+      total[res] = (total[res] || 0) + 1;
+      if (Number(r[0]) < myRank) above[res] = (above[res] || 0) + 1;
     }
   }
-  return placed;
+  return { total: total, above: above, myRank: myRank };
+}
+// Сумісність: місця, зайняті тими, хто вище за обраного
+function placedAboveMe() { return placedCounts().above; }
+
+// Стан місць бази з точки зору обраного користувача (враховує його рейтинг)
+//   state: 'free' — є вільні місця; 'bump' — зайнято, але користувач вищий у рейтингу й може зайняти; 'none' — місць немає
+function slotInfo(option) {
+  const cap = parseCap(option);
+  const pc = placedCounts();
+  const aboveCnt = pc.above[option] || 0;
+  const totalCnt = pc.total[option] || 0;
+  const absRemaining = (globalRemaining && globalRemaining[option] !== undefined)
+    ? Math.max(0, globalRemaining[option])
+    : (isFinite(cap) ? Math.max(0, cap - totalCnt) : Infinity);
+  const myRemaining = isFinite(cap) ? Math.max(0, cap - aboveCnt) : Infinity;
+  const known = pc.myRank !== Infinity; // чи обрано ПІБ (відомий рейтинг)
+  let state;
+  if (myRemaining <= 0) state = 'none';
+  else if (absRemaining <= 0) state = 'bump';
+  else state = 'free';
+  return { cap: cap, absRemaining: absRemaining, myRemaining: myRemaining, known: known, state: state };
 }
 
 // Оновлення випадаючих списків: залишок місць, блокування зайнятих, позначки "обране"/"ваш вибір"
 const prios = Array.from(document.querySelectorAll('.prio-select'));
 function updateDropdownLocks() {
-  const myRank = getMyRank();
-  const placed = placedAboveMe();
   const chosen = prios.map(s => s.value).filter(v => v !== "");
   prios.forEach(sel => {
     Array.from(sel.options).forEach(opt => {
       if (!opt.value || opt.value === OUTSIDE) return; // плейсхолдер / спец-варіант
       const base = opt.value;
-      const cap = parseCap(base);
-      const remaining = Math.max(0, cap - (placed[base] || 0));
+      const si = slotInfo(base);
       const isCurrent = (sel.value === base);
       const inOther = chosen.includes(base) && !isCurrent;
+      opt.disabled = false; // нічого не блокуємо у нативному списку — кастомний список вирішує клікабельність
       opt.style.color = '';
       opt.style.backgroundColor = '';
-      if (isCurrent) {
-        opt.disabled = false;
-        opt.text = base + '  ✓ ваш вибір';
-        opt.style.color = 'var(--moss-dark)';
-        opt.style.backgroundColor = 'var(--moss-light)';
-      } else if (inOther) {
-        opt.disabled = true;
-        opt.text = base + '  ✓ обране';
-        opt.style.color = 'var(--moss-dark)';
-        opt.style.backgroundColor = 'var(--moss-light)';
-      } else if (remaining <= 0) {
-        opt.disabled = true;
-        opt.text = base + '  🔴 місць немає';
-        opt.style.color = 'var(--red)';
-        opt.style.backgroundColor = 'var(--red-light)';
-      } else {
-        opt.disabled = false;
-        opt.text = base + (isFinite(cap) ? '  🟧 залишилось: ' + remaining : '');
-        opt.style.color = '';
-        opt.style.backgroundColor = '';
-      }
+      if (isCurrent) { opt.text = base + '  ✓ ваш вибір'; }
+      else if (inOther) { opt.text = base + '  ↪ перенести сюди'; }
+      else if (si.state === 'none') { opt.text = base + '  🔴 місць немає'; }
+      else if (si.state === 'bump') { opt.text = base + '  ↑ ви вище — можна зайняти'; }
+      else { opt.text = base + (isFinite(si.cap) ? '  🟧 залишилось: ' + si.absRemaining : ''); }
     });
   });
   if (typeof cdRefresh === 'function') cdRefresh();
 }
-prios.forEach(select => select.addEventListener('change', updateDropdownLocks));
+// Зміна пріоритету: якщо ту саму базу вже обрано в іншому пріоритеті — переносимо (очищаємо там)
+function onPrioChange(e) {
+  const sel = e.target, v = sel.value;
+  if (v && v !== OUTSIDE) prios.forEach(o => { if (o !== sel && o.value === v) o.value = ''; });
+  updateDropdownLocks();
+}
+prios.forEach(select => select.addEventListener('change', onPrioChange));
 
 // Функція підстановки збережених даних
 function loadUserChoices(pib) {
@@ -1213,7 +1267,7 @@ async function fetchInitialData() {
     updateDropdownLocks(); // показати залишок місць одразу після завантаження
 
   } catch (error) {
-    document.getElementById('loaderUI').innerHTML = '<div style="color:var(--clay); font-weight:600; line-height:1.5;">Не вдалося звʼязатися з базою даних.<br>Перевірте інтернет і спробуйте ще раз.</div><button class="submit-btn" style="margin-top:14px; max-width:240px;" type="button" onclick="retryLoad()">↻ Спробувати ще раз</button>';
+    document.getElementById('loaderUI').innerHTML = '<div style="color:var(--clay); font-weight:600; line-height:1.5;">Помилка E01. Не вдалося звʼязатися з базою даних.<br>Перевірте інтернет і спробуйте ще раз.</div><button class="submit-btn" style="margin-top:14px; max-width:240px;" type="button" onclick="retryLoad()">↻ Спробувати ще раз</button>';
   }
 }
 
@@ -1238,8 +1292,8 @@ async function submitData() {
       msg.textContent = "✅ Збережено!"; msg.className = "status-msg success"; msg.style.display = 'block';
       if (result.updated) { globalUpdated[pib] = result.updated; showLastUpdated(pib); }
       fetchInitialData();
-    } else { msg.textContent = "Помилка: " + (result.message || "Невірний ПІН"); msg.className = "status-msg error"; msg.style.display = 'block'; }
-  } catch (e) { msg.textContent = "Помилка мережі."; msg.className = "status-msg error"; msg.style.display = 'block'; }
+    } else { msg.textContent = errText(result); msg.className = "status-msg error"; msg.style.display = 'block'; }
+  } catch (e) { msg.textContent = errText(null, 'E01'); msg.className = "status-msg error"; msg.style.display = 'block'; }
   btn.disabled = false; btn.innerHTML = "Зберегти мій вибір";
 }
 
@@ -1322,6 +1376,8 @@ function loadLiveForecast() {
   const tbody = document.getElementById('forecastBody');
   if (!globalForecastData || globalForecastData.length < 2) return;
   const active = fcFiltersActive();
+  const meSel = document.getElementById('pibSelect');
+  const me = (meSel && meSel.value) ? meSel.value.trim() : '';
   let shown = 0, html = '';
   for (let i = 1; i < globalForecastData.length; i++) {
     const row = globalForecastData[i];
@@ -1340,10 +1396,10 @@ function loadLiveForecast() {
       if (resMatch && rb.spec) resultCell = '<span class="fc-result-hit">' + escapeHtml(rb.code) + ' | ' + fcHl(rb.spec, fcFilters.spec) + ' | ' + fcHl(rb.city, fcFilters.city) + ' | ' + fcHl(rb.base, fcFilters.base) + '</span>';
     }
     const openCls = active ? ' open' : '';
-    const nameHit = false; // пошук за ПІБ тепер фільтрує, а не підсвічує
+    const isMe = me && String(pib).trim() === me;
     html +=
-      `<tr class="fc-row${openCls}${nameHit ? ' fc-namehit' : ''}" data-row="${i}" data-pib="${escapeHtml(pib)}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
-      `<td style="font-weight:600;">${escapeHtml(pib)}${(globalUpdated && globalUpdated[pib]) ? `<span class="fc-upd">↻ ${escapeHtml(String(globalUpdated[pib]).slice(0, 16))}</span>` : ''}</td>`+
+      `<tr class="fc-row${openCls}${isMe ? ' fc-row-me' : ''}" data-row="${i}" data-pib="${escapeHtml(pib)}"><td style="font-weight:700;"><span class="fc-toggle">›</span>${row[0]||i}</td>`+
+      `<td style="font-weight:600;">${escapeHtml(pib)}${isMe ? '<span class="fc-me-badge">це ви</span>' : ''}${(globalUpdated && globalUpdated[pib]) ? `<span class="fc-upd">↻ ${escapeHtml(String(globalUpdated[pib]).slice(0, 16))}</span>` : ''}</td>`+
       `<td><span class="status-badge ${badge}">${row[9]||"Не заповнено"}</span></td>`+
       `<td style="font-size:0.85rem;">${resultCell}</td></tr>`+
       `<tr class="fc-detail${openCls}" data-detail="${i}"><td colspan="4"><div class="fc-detail-inner"><div class="fc-detail-title">Пріоритети студента</div>${buildPrioHtml(pib, matched)}</div></td></tr>`;
@@ -1453,7 +1509,6 @@ function showLastUpdated(pib) {
 function cdCloseAll() { document.querySelectorAll('.cd.open').forEach(x => x.classList.remove('open')); }
 function cdRenderList(w, q) {
   const sel = w._sel;
-  const placed = placedAboveMe();
   const chosen = prios.map(s => s.value).filter(Boolean);
   let html = '';
   if (!q) {
@@ -1467,15 +1522,15 @@ function cdRenderList(w, q) {
     const base = opt.value;
     if (!base || base === OUTSIDE) return;
     if (q && base.toLowerCase().indexOf(q) === -1) return;
-    const b = parseBase(base), cap = parseCap(base);
-    const remaining = Math.max(0, cap - (placed[base] || 0));
+    const b = parseBase(base), si = slotInfo(base);
     const isCurrent = sel.value === base;
     const inOther = chosen.includes(base) && !isCurrent;
     let tag = '', cls = '', disabled = false;
     if (isCurrent) { tag = '✓ ваш вибір'; cls = 'taken'; }
-    else if (inOther) { tag = '✓ обране'; cls = 'taken'; disabled = true; }
-    else if (remaining <= 0) { tag = 'місць немає'; cls = 'full'; disabled = true; }
-    else if (isFinite(cap)) { tag = 'залишилось: ' + remaining; cls = 'rem'; }
+    else if (inOther) { tag = '↪ перенести сюди'; cls = 'move'; }            // дозволяємо перенести базу з іншого пріоритету
+    else if (si.state === 'none') { tag = 'місць немає'; cls = 'full'; disabled = true; }
+    else if (si.state === 'bump') { tag = '↑ ви вище — можна зайняти'; cls = 'bump'; } // зайнято, але рейтинг вищий
+    else if (isFinite(si.cap)) { tag = 'залишилось: ' + si.absRemaining; cls = 'rem'; }
     html += `<div class="cd-opt${isCurrent ? ' sel' : ''}${disabled ? ' disabled' : ''}" data-val="${escapeHtml(base)}"><span class="cd-code">${escapeHtml(b.code)}</span><span class="cd-main"><b>${escapeHtml(b.spec)}</b><span class="cd-loc"> · ${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span></span>${tag ? `<span class="cd-tag ${cls}">${tag}</span>` : ''}</div>`;
   });
   w.querySelector('.cd-list').innerHTML = html || '<div class="cd-empty">Нічого не знайдено</div>';
