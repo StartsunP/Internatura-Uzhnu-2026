@@ -28,8 +28,8 @@
   .bg-deco { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-repeat: repeat; background-size: 110px 56px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='56'%3E%3Cpath d='M0 28 Q27.5 6 55 28 T110 28' fill='none' stroke='%232f6b4f' stroke-width='1.5'/%3E%3C/svg%3E");
     opacity: 0.5;
-    -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 34%, transparent 66%, #000 100%);
-    mask-image: linear-gradient(to right, #000 0%, transparent 34%, transparent 66%, #000 100%); }
+    -webkit-mask-image: linear-gradient(to right, #000 0px, transparent 235px, transparent calc(100% - 235px), #000 100%);
+    mask-image: linear-gradient(to right, #000 0px, transparent 235px, transparent calc(100% - 235px), #000 100%); }
   [data-theme="dark"] .bg-deco { opacity: 0.5;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='56'%3E%3Cpath d='M0 28 Q27.5 6 55 28 T110 28' fill='none' stroke='%234a8f6d' stroke-width='1.5'/%3E%3C/svg%3E"); }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 18px; }
