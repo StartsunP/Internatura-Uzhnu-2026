@@ -153,10 +153,10 @@
   .count-badge { display: inline-block; min-width: 30px; text-align: center; font-weight: 700; background: var(--moss); color: #fff; border-radius: 8px; padding: 3px 9px; font-size: 0.88rem; }
   .rem-pill { display: inline-block; margin-top: 5px; font-size: 0.7rem; font-weight: 700; padding: 1px 7px; border-radius: 8px; background: var(--moss-light); color: var(--moss-dark); white-space: nowrap; }
   .rem-pill.rem-0 { background: var(--red-light); color: var(--red); }
-  .rem-pill.rem-bump { background: #fff0d6; color: #8a5a00; }
+  .rem-pill.rem-bump { background: #ece1fb; color: #6a3fb0; }
   [data-theme="dark"] .rem-pill { background: rgba(79,157,119,0.2); color: #7bb494; }
   [data-theme="dark"] .rem-pill.rem-0 { background: rgba(224,122,104,0.2); color: #e8a095; }
-  [data-theme="dark"] .rem-pill.rem-bump { background: rgba(211,168,95,0.22); color: #e6c478; }
+  [data-theme="dark"] .rem-pill.rem-bump { background: rgba(150,110,210,0.24); color: #c9b1f0; }
   .zvo-tag { display: inline-block; font-size: 0.72rem; color: var(--gold); font-weight: 600; border: 1px solid #e8d5b0; border-radius: 6px; padding: 1px 6px; margin: 1px 2px 1px 0; white-space: nowrap; }
   .star-btn { border: 0; background: transparent; cursor: pointer; font-size: 1.15rem; color: #cdd3cb; transition: transform 0.12s; }
   .star-btn.on { color: var(--gold); }
@@ -294,7 +294,7 @@
   .cd-tag.rem { background: #ffe3b3; color: #9a5800; }
   .cd-tag.taken { background: var(--moss-light); color: var(--moss-dark); }
   .cd-tag.full { background: #f6c9c2; color: #bf2419; }
-  .cd-tag.bump { background: #ffe0a3; color: #8a5a00; }
+  .cd-tag.bump { background: #ece1fb; color: #6a3fb0; }
   .cd-tag.move { background: var(--moss-light); color: var(--moss-dark); }
   .cd-empty { padding: 16px; text-align: center; color: var(--muted); font-size: 0.85rem; }
   .view-toggle { font-size: 0.78rem; font-weight: 600; border: 1.5px solid var(--line); border-radius: 9px; padding: 6px 11px; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; flex-shrink: 0; margin-left: auto; font-family: inherit; }
@@ -302,7 +302,7 @@
   [data-theme="dark"] .cd-tag.rem { background: rgba(230,170,70,0.25); color: #ecc270; }
   [data-theme="dark"] .cd-tag.taken { background: rgba(79,157,119,0.22); color: #7bb494; }
   [data-theme="dark"] .cd-tag.full { background: rgba(230,70,55,0.32); color: #f5897a; }
-  [data-theme="dark"] .cd-tag.bump { background: rgba(211,168,95,0.28); color: #e6c478; }
+  [data-theme="dark"] .cd-tag.bump { background: rgba(150,110,210,0.28); color: #c9b1f0; }
   [data-theme="dark"] .cd-tag.move { background: rgba(79,157,119,0.22); color: #7bb494; }
   [data-theme="dark"] .cd-opt.sel { background: rgba(79,157,119,0.18); }
   /* Компактні пріоритети + нерухоме меню пошуку на телефоні */
@@ -918,7 +918,7 @@ if(mapSvg) mapSvg.setAttribute('viewBox', MAPGEO.viewBox); specs.forEach(s => ma
 function remPill(r) {
   if (!globalRemaining || !r.option || globalRemaining[r.option] === undefined) return '';
   const si = slotInfo(r.option);
-  if (si.state === 'bump') return `<div class="rem-pill rem-bump" title="Місця зайняті, але ваш рейтинг вищий — ви можете їх зайняти">↑ ви вище</div>`;
+  if (si.state === 'bump') return `<div class="rem-pill rem-bump" title="Місця зайняті, але ваш рейтинг вищий — ви можете їх зайняти">ви вище 🏆</div>`;
   if (si.state === 'none') return `<div class="rem-pill rem-0">зайнято</div>`;
   return `<div class="rem-pill">вільно: ${si.absRemaining}</div>`;
 }
@@ -1181,7 +1181,7 @@ function updateDropdownLocks() {
       if (isCurrent) { opt.text = base + '  ✓ ваш вибір'; }
       else if (inOther) { opt.text = base + '  ↪ перенести сюди'; }
       else if (si.state === 'none') { opt.text = base + '  🔴 місць немає'; }
-      else if (si.state === 'bump') { opt.text = base + '  ↑ ви вище — можна зайняти'; }
+      else if (si.state === 'bump') { opt.text = base + '  ви вище 🏆 — можна зайняти'; }
       else { opt.text = base + (isFinite(si.cap) ? '  🟧 залишилось: ' + si.absRemaining : ''); }
     });
   });
@@ -1529,7 +1529,7 @@ function cdRenderList(w, q) {
     if (isCurrent) { tag = '✓ ваш вибір'; cls = 'taken'; }
     else if (inOther) { tag = '↪ перенести сюди'; cls = 'move'; }            // дозволяємо перенести базу з іншого пріоритету
     else if (si.state === 'none') { tag = 'місць немає'; cls = 'full'; disabled = true; }
-    else if (si.state === 'bump') { tag = '↑ ви вище — можна зайняти'; cls = 'bump'; } // зайнято, але рейтинг вищий
+    else if (si.state === 'bump') { tag = 'ви вище 🏆 — можна зайняти'; cls = 'bump'; } // зайнято, але рейтинг вищий
     else if (isFinite(si.cap)) { tag = 'залишилось: ' + si.absRemaining; cls = 'rem'; }
     html += `<div class="cd-opt${isCurrent ? ' sel' : ''}${disabled ? ' disabled' : ''}" data-val="${escapeHtml(base)}"><span class="cd-code">${escapeHtml(b.code)}</span><span class="cd-main"><b>${escapeHtml(b.spec)}</b><span class="cd-loc"> · ${escapeHtml(b.city)} · ${escapeHtml(b.base)}</span></span>${tag ? `<span class="cd-tag ${cls}">${tag}</span>` : ''}</div>`;
   });
