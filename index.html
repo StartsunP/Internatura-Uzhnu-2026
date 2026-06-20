@@ -23,12 +23,12 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--paper); background-image: radial-gradient(rgba(47,107,79,0.05) 1.2px, transparent 1.2px); background-size: 26px 26px; background-attachment: fixed; color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  [data-theme="dark"] body { background-image: radial-gradient(rgba(255,255,255,0.022) 1.2px, transparent 1.2px); }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--paper); background-image: radial-gradient(rgba(47,107,79,0.13) 1.7px, transparent 1.8px); background-size: 24px 24px; background-attachment: fixed; color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  [data-theme="dark"] body { background-image: radial-gradient(rgba(255,255,255,0.06) 1.7px, transparent 1.8px); }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 18px; }
 
   /* HERO */
-  .hero { background: radial-gradient(rgba(255,255,255,0.04) 1.2px, transparent 1.2px) 0 0 / 26px 26px, radial-gradient(120% 120% at 80% -20%, rgba(184,137,63,0.18), transparent 60%), linear-gradient(160deg, var(--moss-dark) 0%, var(--moss) 100%); color: #fff; padding: 48px 0 44px; position: relative; overflow: hidden; }
+  .hero { background: radial-gradient(rgba(255,255,255,0.10) 1.7px, transparent 1.8px) 0 0 / 24px 24px, radial-gradient(120% 120% at 80% -20%, rgba(184,137,63,0.18), transparent 60%), linear-gradient(160deg, var(--moss-dark) 0%, var(--moss) 100%); color: #fff; padding: 48px 0 44px; position: relative; overflow: hidden; }
   .hero .wrap { position: relative; z-index: 2; text-align: center; }
   .eyebrow { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.75; font-weight: 600; margin-bottom: 14px; }
   .hero h1 { font-size: clamp(1.9rem, 5vw, 3.1rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; max-width: 18ch; margin-left: auto; margin-right: auto; }
@@ -1041,7 +1041,7 @@ function switchTab(tabId) {
   if (tabId === 'map') setTimeout(renderMap, 30);
   if (tabId === 'favs') renderFavs();
   if (tabId === 'live') loadLiveForecast();
-  window.scrollTo({top:0, behavior:'smooth'});
+  // сторінку НЕ прокручуємо — лишаємось на місці
 }
 document.querySelectorAll('.tab-btn').forEach(btn => {
   const newBtn = btn.cloneNode(true);
@@ -1393,19 +1393,31 @@ function showLastUpdated(pib) {
 (function () {
   const vt = document.getElementById('viewToggle');
   if (!vt) return;
-  const modes = ['auto', 'pc', 'mobile'];
-  const icons = { auto: 'Режим: Авто  →  🖥 ПК', pc: 'Режим: ПК  →  📱 Телефон', mobile: 'Режим: Телефон  →  🔄 Авто' };
-  const titles = { auto: 'Зараз: Авто (за пристроєм). Клік → ПК-версія', pc: 'Зараз: ПК-версія. Клік → версія для телефону', mobile: 'Зараз: версія для телефону. Клік → Авто' };
-  function apply(m) {
-    document.body.classList.remove('force-pc', 'force-mobile');
-    if (m === 'pc') document.body.classList.add('force-pc');
-    if (m === 'mobile') document.body.classList.add('force-mobile');
-    vt.textContent = icons[m]; vt.title = titles[m];
-    localStorage.setItem('view_mode', m);
+  // Режими: 'pc' / 'mobile'. 'auto' — лише початковий стан (за пристроєм), невидимий і не обирається.
+  let mode = localStorage.getItem('view_mode') || 'auto'; // 'auto' тільки доки користувач не обрав
+  // Чи зараз макет «мобільний» (для auto — за шириною екрана)
+  function isMobileNow() {
+    if (mode === 'pc') return false;
+    if (mode === 'mobile') return true;
+    return window.matchMedia('(max-width: 600px)').matches;
   }
-  let mode = localStorage.getItem('view_mode') || 'auto';
-  apply(mode);
-  vt.addEventListener('click', function () { mode = modes[(modes.indexOf(mode) + 1) % modes.length]; apply(mode); });
+  function apply() {
+    document.body.classList.remove('force-pc', 'force-mobile');
+    if (mode === 'pc') document.body.classList.add('force-pc');
+    if (mode === 'mobile') document.body.classList.add('force-mobile');
+    // Показуємо РЕЖИМ ПЕРЕХОДУ (протилежний до поточного)
+    const targetPc = isMobileNow();
+    vt.textContent = targetPc ? '→ 🖥 ПК-версія' : '→ 📱 Телефон';
+    vt.title = targetPc ? 'Перейти на ПК-версію' : 'Перейти на версію для телефону';
+  }
+  apply();
+  vt.addEventListener('click', function () {
+    mode = isMobileNow() ? 'pc' : 'mobile'; // переходимо у протилежний режим
+    localStorage.setItem('view_mode', mode);
+    apply();
+  });
+  // якщо користувач ще в auto — оновлювати напис при зміні розміру вікна
+  window.addEventListener('resize', function () { if (mode === 'auto') apply(); });
 })();
 
 // Кнопка "вгору до фільтрів" — з'являється при прокручуванні вниз
