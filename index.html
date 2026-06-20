@@ -23,14 +23,15 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--paper); color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--paper); background-image: radial-gradient(rgba(47,107,79,0.05) 1.2px, transparent 1.2px); background-size: 26px 26px; background-attachment: fixed; color: var(--ink); line-height: 1.55; transition: background 0.25s, color 0.25s; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  [data-theme="dark"] body { background-image: radial-gradient(rgba(255,255,255,0.022) 1.2px, transparent 1.2px); }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 18px; }
 
   /* HERO */
-  .hero { background: radial-gradient(120% 120% at 80% -20%, rgba(184,137,63,0.18), transparent 60%), linear-gradient(160deg, var(--moss-dark) 0%, var(--moss) 100%); color: #fff; padding: 48px 0 44px; position: relative; overflow: hidden; }
+  .hero { background: radial-gradient(rgba(255,255,255,0.04) 1.2px, transparent 1.2px) 0 0 / 26px 26px, radial-gradient(120% 120% at 80% -20%, rgba(184,137,63,0.18), transparent 60%), linear-gradient(160deg, var(--moss-dark) 0%, var(--moss) 100%); color: #fff; padding: 48px 0 44px; position: relative; overflow: hidden; }
   .hero .wrap { position: relative; z-index: 2; text-align: center; }
   .eyebrow { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.75; font-weight: 600; margin-bottom: 14px; }
-  .hero h1 { font-size: clamp(1.9rem, 5vw, 3.1rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; max-width: 16ch; }
+  .hero h1 { font-size: clamp(1.9rem, 5vw, 3.1rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; max-width: 18ch; margin-left: auto; margin-right: auto; }
   .hero .lede { margin: 16px auto 0; font-size: 1.02rem; opacity: 0.9; max-width: 52ch; }
   .hero-figures { display: grid; grid-template-columns: repeat(4, auto); gap: 22px 44px; margin-top: 34px; justify-content: center; }
   @media (max-width: 600px) { .hero-figures { grid-template-columns: repeat(2, auto); gap: 20px 48px; justify-content: center; } }
@@ -55,8 +56,10 @@
   /* меню — fixed, поза контейнером вкладок з overflow (інакше обрізається); координати задає JS */
   .nav-menu { position: fixed; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 34px rgba(0,0,0,0.35); display: none; flex-direction: column; padding: 7px; min-width: 230px; z-index: 160; }
   .nav-menu.open { display: flex; }
-  .nav-menu > button { width: 100%; text-align: left !important; justify-content: flex-start; white-space: normal !important; font-size: 0.9rem !important; padding: 11px 13px !important; margin: 0 !important; border: 0 !important; border-radius: 10px !important; }
-  .nav-menu > button:hover { background: var(--hover); }
+  .nav-menu > button { width: 100%; display: flex; align-items: center; gap: 8px; text-align: left !important; justify-content: flex-start; white-space: normal !important; font-size: 0.9rem !important; font-weight: 600 !important; line-height: 1.3; padding: 11px 13px !important; margin: 0 !important; border: 0 !important; border-radius: 10px !important; background: transparent !important; color: var(--ink) !important; cursor: pointer; }
+  .nav-menu > button:hover { background: var(--hover) !important; }
+  .nav-menu .tab-btn.active { background: var(--moss) !important; color: #fff !important; }
+  .nav-menu .fav-tab.active { background: var(--clay) !important; color: #fff !important; }
   .nav-menu-sep { height: 1px; background: var(--line); margin: 6px 6px; }
   .fav-badge { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 4px; background: var(--clay); color: #fff; border-radius: 10px; font-size: 0.72rem; font-weight: 800; text-align: center; line-height: 18px; }
   .fav-tab.active .fav-badge { background: rgba(255,255,255,0.3); }
@@ -236,7 +239,7 @@
   .guide-ok { width: 100%; margin-top: 18px; background: var(--moss); color: #fff; border: 0; border-radius: 12px; padding: 13px; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
   .guide-ok:hover { filter: brightness(1.07); }
   /* Кастомний випадаючий список баз (Мій вибір) */
-  .cd { position: relative; margin-bottom: 16px; max-width: 760px; }
+  .cd { position: relative; margin-bottom: 16px; }
   .cd-trigger { width: 100%; text-align: left; border: 1.5px solid var(--line); border-radius: 11px; padding: 12px 36px 12px 14px; font-size: 0.92rem; font-family: inherit; background: var(--paper); color: var(--ink); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .cd-trigger::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
   .cd.open .cd-trigger { border-color: var(--moss); background: var(--card); }
